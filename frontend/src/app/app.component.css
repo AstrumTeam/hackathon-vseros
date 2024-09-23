@@ -1,0 +1,207 @@
+.container{
+    text-align: center;
+    z-index: 1;
+    position: relative;
+}
+
+
+.astrum{
+    text-align: center;
+    font-size: 60px;
+    font-weight: 800;
+    color: rgb(22,31,47);
+    font-family: 'Open Sans';
+}
+
+.studio{
+    margin-top: 10px;
+    text-align: center;
+    font-size: 50px;
+    font-weight: 400;
+    color: rgb(238,0,50);
+    font-family: 'Open Sans';
+}
+
+.point{
+    background-color: red;
+    height: 15px;
+    width: 15px;
+    border-radius: 100%;
+    margin-top: 20px;
+}
+
+.drop_menu{
+    height: 40px;
+    width: 400px;
+    font-size: 20px;
+    font-family: "Open Sans";
+    font-weight: 400;
+    color: rgb(22,31,47);
+    text-align: left;
+    border-radius: 10px;
+    border: 1px solid rgb(22,31,47);
+    padding-top: 10px;
+    padding-left: 10px;
+    z-index: 1;
+    cursor: pointer;
+}
+.drop_menu:hover{
+    color: rgb(252,75,77);
+    border: 1px solid rgb(252,75,77);
+    transition: 0.3s ease;
+}
+
+.drop_menu_element{
+    height: 40px;
+    width: 400px;
+    font-size: 20px;
+    font-family: "Open Sans";
+    font-weight: 400;
+    color: rgb(22,31,47);
+    text-align: left;
+    border-top: 1px solid rgb(22,31,47);
+    border-left: 1px solid rgb(22,31,47);
+    border-right: 1px solid rgb(22,31,47);
+    background-color: rgb(244,244,244);
+    padding-top: 10px;
+    padding-left: 10px;
+    z-index: 5;
+    cursor: pointer;
+}
+.drop_menu_element:first-child{
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.drop_menu_element:last-child{
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom: 1px solid rgb(22,31,47);
+}
+.drop_menu_element:hover{
+    color: rgb(252,75,77);
+}
+
+.description{
+    text-align: center;
+    font-size: 30px;
+    font-weight: 500;
+    color: rgb(31,38,46);
+    font-family: 'Open Sans';
+}
+
+.upload_btn{
+    position: relative;
+    z-index: 1;
+    background-color: rgb(252,75,77);
+    font-family: 'Open Sans';
+    font-size: 20px;
+    color: white;
+    height: 50px;
+    width: 300px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.inverse_btn{
+    position: relative;
+    z-index: 1;
+    background-color: rgb(244,244,244);
+    font-family: 'Open Sans';
+    font-size: 20px;
+    color: rgb(252,75,77);
+    height: 50px;
+    width: 300px;
+    border: 1px solid rgb(252,75,77);
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.instruction{
+    margin-top: 50px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 400;
+    color: rgb(31,38,46);
+    font-family: 'Open Sans';
+}
+
+.settings_text{
+    text-align: center;
+    font-size: 20px;
+    font-weight: 400;
+    color: rgb(31,38,46);
+    font-family: 'Open Sans';
+}
+
+/* Стили для самого переключателя */
+.toggle-switch {
+    width: 60px;
+    height: 30px;
+    background-color: #101317;
+    border-radius: 30px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 1px solid rgb(31,38,46);
+}
+
+/* Стили для точки внутри переключателя */
+.toggle-switch::before {
+    content: '';
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: rgb(244, 244, 244);
+    top: 2px;
+    left: 2px;
+    transition: left 0.3s ease;
+}
+
+/* Включенное состояние */
+.toggle-switch.active {
+    background-color: rgb(252,75,77);
+    border: 1px solid rgb(252,75,77);
+}
+
+/* Позиция точки в активном состоянии */
+.toggle-switch.active::before {
+    left: 32px;
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: 90px;
+    height: 14px;
+    box-shadow: 0 3px 0 rgb(22,31,47);
+    position: relative;
+    clip-path: inset(-40px 0 -5px)
+  }
+  .loader:before {
+    content: "";
+    position: absolute;
+    inset: auto calc(50% - 17px) 0;
+    height: 50px;
+    --g:no-repeat linear-gradient(rgb(252,75,77) 0 0);
+    background: var(--g),var(--g),var(--g),var(--g);
+    background-size: 16px 14px;
+    animation:
+      l7-1 2s infinite linear,
+      l7-2 2s infinite linear;
+  }
+  @keyframes l7-1 {
+    0%,
+    100%  {background-position: 0 -50px,100% -50px}
+    17.5% {background-position: 0 100%,100% -50px,0 -50px,100% -50px}
+    35%   {background-position: 0 100%,100% 100% ,0 -50px,100% -50px}
+    52.5% {background-position: 0 100%,100% 100% ,0 calc(100% - 16px),100% -50px}
+    70%,
+    98%  {background-position: 0 100%,100% 100% ,0 calc(100% - 16px),100% calc(100% - 16px)}
+  }
+  @keyframes l7-2 {
+    0%,70% {transform:translate(0)}
+    100%  {transform:translate(200%)}
+  }

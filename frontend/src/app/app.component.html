@@ -1,0 +1,97 @@
+<div class="container">
+  <div style="display: flex; margin: 0 auto; justify-content: center;">
+    <div class="astrum">
+      astrum
+    </div>
+    <div class="point"></div>
+    <div class="studio">Studio</div>
+  </div>
+  
+  <div class="description">
+    Генерация виральных клипов
+  </div>
+  
+  <div style="height: 50px;"></div>
+  
+  
+  
+  <div *ngIf="!showResult && !showSettings">
+    <div style=" text-align: center;">
+      <button class="upload_btn" (click)="settings()">
+        Загрузить видео
+      </button>
+    </div>
+    
+    <div class="instruction">
+      Загрузите свое видео, а мы сделаем из него множество интересных клипов с нужными вам настройками.
+    </div>
+  </div>
+  
+  <div *ngIf="!showResult && showSettings">
+    <div style="display: flex; margin: 0 auto; justify-content: center;">
+      <div class="toggle-switch" [class.active]="isActiveSubtitles" (click)="toggleSubtitles()"></div>
+      <div style="margin-left: 10px;" class="settings_text">
+        Добавить субтитры
+      </div>
+    </div>
+
+    <div style="height: 20px;"></div>
+
+    <div style="display: flex; margin: 0 auto; justify-content: center;">
+      <div (click)="showSizesEvent()" class="drop_menu">
+        {{modelSizesSelected}}
+      </div>
+    </div>
+
+    <div style="height: 10px;"></div>
+
+    <div *ngIf="showSizes" style="display: flex; flex-direction: column; align-items: center; margin: 0 auto; z-index: 99; position: absolute; left: 50%; transform: translateX(-50%);">
+      <div *ngFor="let item of modelSizes" (click)="modelSizeSelected(item)" class="drop_menu_element">
+          {{item}}
+      </div>
+    </div>
+  
+    <div style="margin-top: 50px; text-align: center;">
+      <button class="upload_btn" (click)="upload()">
+        Начать генерацию
+      </button>
+    </div>
+
+    <div style="text-align: center;">
+      <button style="margin-top: 10px;" class="inverse_btn" (click)="again()">
+        Назад
+      </button>
+    </div>
+  </div>
+  
+  <div *ngIf="showResult && !showSettings">
+
+    <div style="display: flex; margin: 0 auto; justify-content: center;">
+      <div class="loader"></div> 
+    </div>
+    <div style="height: 10px;"></div>
+    <div class="settings_text">
+      Собираем результат для вас...
+    </div>
+    <div class="settings_text">
+      Это может занять до 99 лет
+    </div>
+
+    <div class="description">
+      Вот что у нас получилось:
+    </div>
+  
+    <div style="margin-top: 10px; text-align: center;">
+      <button class="upload_btn">
+        Скачать архив
+      </button>
+    </div>
+  
+    <div style="margin-top: 10px; text-align: center;">
+      <button class="inverse_btn" (click)="again()">
+        Загрузить еще видео
+      </button>
+    </div>
+  </div>
+  
+</div>
