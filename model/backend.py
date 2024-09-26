@@ -3,45 +3,48 @@ from pydub import AudioSegment, effects
 import csv
 import stable_whisper
 
-from clf_model import InterestClassificationModel
+from models import InterestClassificationModel
 from processing import Processing
 import os
 
 class Backend:
     def __init__(self):
-        self.__clf_model = InterestClassificationModel()
+        self.__clf_interest_model = InterestClassificationModel()
         self.__processing = Processing()
 
 
         self.__model_whisper = stable_whisper.load_model('tiny')
         self.__audio_file_name = "out_audio"
-        self.__model_whisper_out_name = 'audio.tsv'
+        self.__model_whisper_out_name = 'transcribe_audio'
 
 
-    def work(self, upload_file):
+    def work(self, upload_file, threshold=0.5):
         # self.__get_audio(upload_file)
         # model_whisper_out = self.__model_whisper.transcribe(f'{self.__audio_file_name}.mp3')
-        # model_whisper_out.to_tsv(self.__model_whisper_out_name)
+        # model_whisper_out.to_tsv(f'{self.__model_whisper_out_name}.tsv')
         # self.__clear_files()
 
-        interest_tags = []
-        current_index = 0
-        tags = self.__processing_transcribe(self.__model_whisper_out_name)
-        while current_index < len(tags)-5:
-            start_index = current_index
-            # end_index = len(self.__cut_tags(tags[start_index]['start'], tags[start_index]['start']+10, tags)) + current_index
-            end_index = start_index+5
-
-            clip_text = ''.join([x['text']+' ' for x in tags[start_index:end_index]])
-            clip_sentences = self.__processing.split_by_sentences(clip_text)
-
-        clip = VideoFileClip(upload_file)
-        clip = clip.subclip(0, 10)
-        clip.write_videofile(f'new_{upload_file}')
-
+        tags = self.__processing_transcribe(f'{self.__model_whisper_out_name}.tsv')
+        sentences_tags = self.__split_tags_by_sentences(tags)
+        sentences = [x['text'] for x in sentences_tags]
+        return sentences
     
-    def __cut_tags(self, start, end, subtitles):
-        return list(filter(lambda x: start<=x['start'] and x['start'] <= end, subtitles))  
+        # sentences_interest = self.__clf_interest_model.predict(sentences)
+        # return sentences_interest
+
+        # clip = VideoFileClip(upload_file)
+        # clip = clip.subclip(0, 10)
+        # clip.write_videofile(f'new_{upload_file}')
+
+
+    def __get_audio(self, file):
+        audioclip = AudioFileClip(file)
+        audioclip.write_audiofile(f'{self.__audio_file_name}.wav')
+
+        norm_sound = AudioSegment.from_file(f'{self.__audio_file_name}.wav', format='wav')
+        norm_sound = effects.normalize(norm_sound)
+        norm_sound.export(f'{self.__audio_file_name}.mp3', format='mp3')
+
 
     def __processing_transcribe(self, file):
         tags = []
@@ -57,17 +60,32 @@ class Backend:
                 })
         return tags
     
+    def __split_tags_by_sentences(self, tags):
+        sentences_tags = []
+        current_index = 0
+        while current_index <= len(tags)-2:
+            start, end = current_index, current_index+1
 
-    def __get_audio(self, file):
-        audioclip = AudioFileClip(file)
-        audioclip.write_audiofile(f'{self.__audio_file_name}.wav')
+            clip_text = tags[start]['text']
+            count_sentences = len(self.__processing.split_by_sentences(clip_text))
 
-        norm_sound = AudioSegment.from_file(f'{self.__audio_file_name}.wav', format='wav')
-        norm_sound = effects.normalize(norm_sound)
-        norm_sound.export(f'{self.__audio_file_name}.mp3', format='mp3')
+            stop_flag = False
+            while stop_flag == False:
+                new_clip_text = ''.join([x['text']+' ' for x in tags[start:end+1]])
+                new_count_sentences = len(self.__processing.split_by_sentences(new_clip_text))
+
+                if new_count_sentences != count_sentences:
+                    current_index = end
+                    sentence_tag = {'start': tags[start]['start'], 'end': tags[end-1]['end'], 'text': clip_text}
+                    sentences_tags.append(sentence_tag)
+                    stop_flag = True
+                else:
+                    clip_text = new_clip_text
+                    end += 1
+        return sentences_tags
 
 
     def __clear_files(self):
         os.remove(f'{self.__audio_file_name}.mp3')
         os.remove(f'{self.__audio_file_name}.wav')
-        # os.remove('audio.tsv')
+        os.remove(f'{self.__model_whisper_out_name}.tsv')
