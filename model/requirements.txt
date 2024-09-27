@@ -1,0 +1,20 @@
+pandas
+numpy
+ffmpeg #так же поставить на сервер
+moviepy
+pydub
+yt-dlp # --no-deps -U 
+natasha
+
+stable-ts
+
+torch 
+torchvision 
+torchaudio
+transformers
+scikit-learn
+matplotlib
+scipy
+fastapi 
+uvicorn
+python-multipart
