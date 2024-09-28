@@ -258,8 +258,8 @@ class Backend:
     
     def __split_tags_by_sentences(self, tags):
         all_text = ''.join([x['text']+' ' for x in tags])
+        sentences_tags = []
         if (len(self.__processing.split_by_sentences(all_text)) < 20):
-            sentences_tags = []
             current_index = 0
             while current_index <= len(tags)-3:
                 start, end = current_index, current_index+2
@@ -267,7 +267,6 @@ class Backend:
                 sentence_tag = {'start': tags[start]['start'], 'end': tags[end]['end'], 'text': clip_text}
                 sentences_tags.append(sentence_tag)
                 current_index = end+1
-            return sentences_tags
         else:
             current_index = 0
             while current_index <= len(tags)-2:
@@ -289,7 +288,7 @@ class Backend:
                     else:
                         clip_text = new_clip_text
                         end += 1
-            return sentences_tags
+        return sentences_tags
     
     def __normalize(self, pred, threshold=0.5):
         pred_soft = []
