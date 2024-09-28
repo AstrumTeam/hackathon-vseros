@@ -68,7 +68,7 @@ class Backend:
                     clip = crop_video_to_9_16(clip)
             
             if subtitles:
-                subtitles_tags = filter(lambda x: x['start'] >= interest_clip_tags[i]['start'] and x['end'] <= interest_clip_tags[i]['end'], tags)
+                subtitles_tags = list(filter(lambda x: x['start'] >= interest_clip_tags[i]['start'] and x['end'] <= interest_clip_tags[i]['end'], tags))
                 clip = add_subtitles_to_clip(clip, subtitles_tags)
 
             clip_name = str(uuid.uuid4())
@@ -97,7 +97,7 @@ class Backend:
                         clip = crop_video_to_9_16(clip)
             
                 if subtitles:
-                    subtitles_tags = filter(lambda x: x['start'] >= humor_clip_tags[i]['start'] and x['end'] <= humor_clip_tags[i]['end'], tags)
+                    subtitles_tags = list(filter(lambda x: x['start'] >= humor_clip_tags[i]['start'] and x['end'] <= humor_clip_tags[i]['end'], tags))
                     clip = add_subtitles_to_clip(clip, subtitles_tags)
 
                 clip_name = str(uuid.uuid4())
@@ -126,7 +126,7 @@ class Backend:
                         clip = crop_video_to_9_16(clip)
             
                 if subtitles:
-                    subtitles_tags = filter(lambda x: x['start'] >= clickbait_clip_tags[i]['start'] and x['end'] <= clickbait_clip_tags[i]['end'], tags)
+                    subtitles_tags = list(filter(lambda x: x['start'] >= clickbait_clip_tags[i]['start'] and x['end'] <= clickbait_clip_tags[i]['end'], tags))
                     clip = add_subtitles_to_clip(clip, subtitles_tags)
 
                 clip_name = str(uuid.uuid4())
