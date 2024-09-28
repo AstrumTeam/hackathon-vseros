@@ -37,6 +37,7 @@ class Backend:
 
         print('processing_transcribe')
         tags = self.__processing_transcribe(f'{self.__model_whisper_out_name}.tsv')
+        print(tags)
         print(len(tags))
 
         print('split_tags_by_sentences')
