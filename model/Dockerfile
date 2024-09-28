@@ -2,6 +2,7 @@ FROM python:3.9.6
 
 RUN apt-get update && apt-get install -y ffmpeg
 RUN apt-get install cmake
+RUN apt-get install imagemagick
 
 COPY requirements.txt .
 # Установка зависимостей (минимизируем вес образа за счёт очистки кеша pip)

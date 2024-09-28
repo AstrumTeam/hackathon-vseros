@@ -61,6 +61,7 @@ async def get_clips(video: UploadFile,
                               threshold=video_data["threshold"],
                               min_length=video_data["min_length"],
                               max_length=video_data["max_length"])
+    print(clip_names)
     return {'clips': clip_names}
 
 @app.get("/api/get/file/id/{file_id}")

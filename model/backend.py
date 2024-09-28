@@ -86,7 +86,7 @@ class Backend:
 
         clip_tags = []
         current_index = 0
-        while current_index <= len(interest_tags)-1:
+        while current_index <= len(interest_tags)-2:
             if interest_tags[current_index] == 1:
                 start_index = current_index
                 end_index = current_index+1
@@ -226,11 +226,11 @@ class Backend:
     
     def __normalize(self, pred, threshold=0.5):
         pred_soft = []
-        pred_soft = pred_soft + pred[:3]
+        pred_soft = pred_soft + pred[:4]
         for i in range(3, len(pred)-3):
-            new_i = (pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3])/7
+            new_i = (pred[i-4] + pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3] + pred[i+4])/9
             pred_soft.append(new_i)
-        pred_soft = pred_soft + pred[-3:]
+        pred_soft = pred_soft + pred[-4:]
             
         soft = gaussian_filter(pred_soft, sigma=.8)
         soft_min_max = minmax_scale(soft, feature_range=(0,1))
