@@ -36,7 +36,7 @@ def add_subtitles_to_clip(clip, subtitles):
         # Создаем текстовый клип для каждого субтитра
         subtitle_clip = TextClip(
             text, fontsize=25, color=hex_color, font='DejaVu-Sans-Mono', 
-            bg_color='transparent', size=(clip.w, 50), stroke_color=hex_color, 
+            bg_color='transparent', size=(clip.w, 100), stroke_color=hex_color, 
             stroke_width=2, method='caption', align='center', kerning=-1
         ).set_duration(end - start).set_start(start)
         

@@ -90,3 +90,32 @@ async def delete_clip_by_id(file_id: str):
         return {"message": f"Video {file_id} deleted successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred while deleting the video")
+    
+@app.get("/api/test")
+async def delete_clip_by_id():
+    return {'clips': [
+        [
+            "32678630-b9f2-4c78-a172-2a6a888273a3",
+            "interest",
+            10
+        ],
+        [
+            "876fc2ac-3991-430a-aea2-51b8ae9df645",
+            "interest",
+            10
+        ],
+        [
+            "25c629c6-95b3-438c-83a7-db5d69da55a4",
+            "humor",
+            10
+        ],
+        [
+            "d3f9f5a4-5f58-46f0-9f91-f28fdc165e0b",
+            "clickbait",
+            10
+        ],
+        [
+            "25c629c6-95b3-438c-83a7-db5d69da55a4",
+            "clickbait",
+            10
+        ]]}
