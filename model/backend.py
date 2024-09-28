@@ -37,11 +37,11 @@ class Backend:
 
         print('processing_transcribe')
         tags = self.__processing_transcribe(f'{self.__model_whisper_out_name}.tsv')
-        print(tags)
+        print(len(tags))
 
-        # print('split_tags_by_sentences')
-        # sentences_tags = self.__split_tags_by_sentences(tags)
-        # print(sentences_tags)
+        print('split_tags_by_sentences')
+        sentences_tags = self.__split_tags_by_sentences(tags)
+        print(len(sentences_tags))
 
         print('get_interest_clip_tags')
         print(len(tags))
@@ -78,8 +78,6 @@ class Backend:
             clip_names.append(clip_name)
         
         self.__clear()
-        print('result')
-        print(clip_names)
         return clip_names
     
     
@@ -87,7 +85,6 @@ class Backend:
     def __get_interest_clip_tags(self, sentences_tags, threshold, min_length, max_length):
         sentences = [x['text'] for x in sentences_tags]
         sentences_interest = self.__clf_interest_model.predict(sentences)
-        print(sentences_interest)
 
         interest_tags =  self.__normalize(sentences_interest, threshold)
 
@@ -204,7 +201,7 @@ class Backend:
         while current_index <= len(tags)-2:
             start, end = current_index, current_index+2
             clip_text = ''.join([x['text']+' ' for x in tags[start:end+1]])
-            sentence_tag = {'start': tags[start]['start'], 'end': tags[end-1]['end'], 'text': clip_text}
+            sentence_tag = {'start': tags[start]['start'], 'end': tags[end]['end'], 'text': clip_text}
             sentences_tags.append(sentence_tag)
             current_index = end+1
         return sentences_tags
