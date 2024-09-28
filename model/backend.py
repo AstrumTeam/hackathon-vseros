@@ -37,16 +37,12 @@ class Backend:
 
         print('processing_transcribe')
         tags = self.__processing_transcribe(f'{self.__model_whisper_out_name}.tsv')
-        print(len(tags))
 
         print('split_tags_by_sentences')
         sentences_tags = self.__split_tags_by_sentences(tags)
-        print(len(sentences_tags))
 
         print('get_interest_clip_tags')
-        print(len(tags))
         interest_clip_tags = self.__get_interest_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
-        print(len(interest_clip_tags))
         
         # if humor:
         #     pass
@@ -61,17 +57,17 @@ class Backend:
             print(interest_clip_tags[i])
             clip = video.subclip(interest_clip_tags[i]['start'], interest_clip_tags[i]['end'])
 
-            print(face_tracking, fields)
+
             if face_tracking == True:
                 clip = process_video_clip(clip)
             else:
                 if fields == True:
                     clip = crop_video_to_9_16_with_fields(clip)
-                elif face_tracking:
+                else:
                     clip = crop_video_to_9_16(clip)
             
             if subtitles:
-                clip = add_subtitles_to_clip(clip,interest_clip_tags[i]['subtitles'])
+                clip = add_subtitles_to_clip(clip, interest_clip_tags[i]['subtitles'])
 
             clip_name = str(uuid.uuid4())
             clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
