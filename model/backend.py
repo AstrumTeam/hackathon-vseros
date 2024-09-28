@@ -84,7 +84,7 @@ class Backend:
             interest_clip_names.append(clip_name)
         
         self.__clear()
-        return clip_names
+        return interest_clip_names
     
     
     
