@@ -30,12 +30,14 @@ def add_subtitles_to_clip(clip, subtitles):
         hex_color = '#{:02x}{:02x}{:02x}'.format(*rgb_color)
 
 
-        new_text = '\n'.join(text[i:i+24] for i in range(0, len(text), 24))
+        # new_text = '\n'.join(text[i:i+24] for i in range(0, len(text), 24))
 
         
         # Создаем текстовый клип для каждого субтитра
         subtitle_clip = TextClip(
-            new_text, fontsize=25, color=hex_color, font='DejaVu-Sans-Mono', bg_color='transparent', size=(clip.w, 50), stroke_color=hex_color, stroke_width=2
+            text, fontsize=25, color=hex_color, font='DejaVu-Sans-Mono', 
+            bg_color='transparent', size=(clip.w, 50), stroke_color=hex_color, 
+            stroke_width=2, method='caption'
         ).set_duration(end - start).set_start(start)
         
         # Позиционируем субтитры внизу видео с отступом
