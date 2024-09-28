@@ -282,7 +282,7 @@ class Backend:
                     new_clip_text = ''.join([x['text']+' ' for x in tags[start:end+1]])
                     new_count_sentences = len(self.__processing.split_by_sentences(new_clip_text))
 
-                    if new_count_sentences != count_sentences:
+                    if new_count_sentences != count_sentences or end >= len(tags)-1:
                         current_index = end
                         sentence_tag = {'start': tags[start]['start'], 'end': tags[end-1]['end'], 'text': clip_text}
                         sentences_tags.append(sentence_tag)
