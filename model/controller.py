@@ -52,7 +52,7 @@ async def get_clips(video: UploadFile,
     with open(file_location, "wb") as video:
         video.write(await file.read())
     
-    clip_names = backend.work(file.filename,
+    clips = backend.work(file.filename,
                               subtitles=video_data["subtitles"],
                               fields=video_data["fields"],
                               face_tracking=video_data["face_tracking"],
@@ -61,8 +61,8 @@ async def get_clips(video: UploadFile,
                               threshold=video_data["threshold"],
                               min_length=video_data["min_length"],
                               max_length=video_data["max_length"])
-    print(clip_names)
-    return {'clips': clip_names}
+    print(clips)
+    return {'clips': clips}
 
 @app.get("/api/get/file/id/{file_id}")
 async def get_clip_by_id(file_id: str):

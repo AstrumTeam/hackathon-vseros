@@ -27,7 +27,7 @@ class Backend:
         self.__model_whisper_out_name = 'transcribe_audio'
 
     def work(self, upload_filename, 
-             threshold = 0.5, min_length = 10, max_length = 60, 
+             threshold = 0.5, min_length = 10, max_length = 61800, 
              subtitles = False, fields = True, face_tracking = False,
              humor = False, clickbait = False):
         
@@ -42,6 +42,7 @@ class Backend:
         print('split_tags_by_sentences')
         sentences_tags = self.__split_tags_by_sentences(tags)
         print(len(sentences_tags))
+
 
         video = VideoFileClip("videos/" + upload_filename)
 
@@ -73,63 +74,72 @@ class Backend:
 
 
 
-        # humor_clip_names = []
-        # if humor:
-        #     print('get_humor_clip_tags')
-        #     humor_clip_tags = self.__get_humor_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
-        #     print(len(humor_clip_tags))
+        humor_clip_names = []
+        if humor:
+            print('get_humor_clip_tags')
+            humor_clip_tags = self.__get_humor_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
+            print(len(humor_clip_tags))
             
-        #     print('humor_clips')
-        #     for i in range(len(humor_clip_tags)):
-        #         clip = video.subclip(humor_clip_tags[i]['start'], humor_clip_tags[i]['end'])
+            print('humor_clips')
+            for i in range(len(humor_clip_tags)):
+                clip = video.subclip(humor_clip_tags[i]['start'], humor_clip_tags[i]['end'])
 
 
-        #         if face_tracking == True:
-        #             clip = process_video_clip(clip)
-        #         else:
-        #             if fields == True:
-        #                 clip = crop_video_to_9_16_with_fields(clip)
-        #             else:
-        #                 clip = crop_video_to_9_16(clip)
+                if face_tracking == True:
+                    clip = process_video_clip(clip)
+                else:
+                    if fields == True:
+                        clip = crop_video_to_9_16_with_fields(clip)
+                    else:
+                        clip = crop_video_to_9_16(clip)
                 
-        #         if subtitles:
-        #             clip = add_subtitles_to_clip(clip, humor_clip_tags[i]['subtitles'])
+                if subtitles:
+                    clip = add_subtitles_to_clip(clip, humor_clip_tags[i]['subtitles'])
 
-        #         clip_name = str(uuid.uuid4())
-        #         clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
-        #         humor_clip_names.append(clip_name)
-
-
-
-        # clickbait_clip_names = []
-        # if clickbait:
-        #     print('get_clickbait_clip_tags')
-        #     clickbait_clip_tags = self.__get_clickbait_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
-        #     print(len(clickbait_clip_tags))
-
-        #     humor_clip_names = []
-        #     print('humor_clips')
-        #     for i in range(len(humor_clip_tags)):
-        #         clip = video.subclip(interest_clip_tags[i]['start'], interest_clip_tags[i]['end'])
+                clip_name = str(uuid.uuid4())
+                clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
+                humor_clip_names.append(clip_name)
 
 
-        #         if face_tracking == True:
-        #             clip = process_video_clip(clip)
-        #         else:
-        #             if fields == True:
-        #                 clip = crop_video_to_9_16_with_fields(clip)
-        #             else:
-        #                 clip = crop_video_to_9_16(clip)
+
+        clickbait_clip_names = []
+        if clickbait:
+            print('get_clickbait_clip_tags')
+            clickbait_clip_tags = self.__get_clickbait_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
+            print(len(clickbait_clip_tags))
+
+            print('clickbait_clips')
+            for i in range(len(clickbait_clip_tags)):
+                clip = video.subclip(clickbait_clip_tags[i]['start'], clickbait_clip_tags[i]['end'])
+
+
+                if face_tracking == True:
+                    clip = process_video_clip(clip)
+                else:
+                    if fields == True:
+                        clip = crop_video_to_9_16_with_fields(clip)
+                    else:
+                        clip = crop_video_to_9_16(clip)
                 
-        #         if subtitles:
-        #             clip = add_subtitles_to_clip(clip, interest_clip_tags[i]['subtitles'])
+                if subtitles:
+                    clip = add_subtitles_to_clip(clip, clickbait_clip_tags[i]['subtitles'])
 
-        #         clip_name = str(uuid.uuid4())
-        #         clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
-        #         clickbait_clip_names.append(clip_name)
+                clip_name = str(uuid.uuid4())
+                clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
+                clickbait_clip_names.append(clip_name)
+
+        all_clips = []
+        for clip in interest_clip_names:
+            all_clips.append([clip, 'interest', 10])
+
+        for clip in humor_clip_names:
+            all_clips.append([clip, 'humor', 10])
+
+        for clip in clickbait_clip_names:
+            all_clips.append([clip, 'clickbait', 10])
         
         self.__clear()
-        return interest_clip_names
+        return all_clips
     
     
     
@@ -171,7 +181,7 @@ class Backend:
 
         clip_tags = []
         current_index = 0
-        while current_index <= len(interest_tags)-2:
+        while current_index < len(interest_tags)-2:
             if interest_tags[current_index] == 1:
                 start_index = current_index
                 end_index = current_index+1
@@ -202,7 +212,7 @@ class Backend:
 
         clip_tags = []
         current_index = 0
-        while current_index <= len(interest_tags)-2:
+        while current_index < len(interest_tags)-2:
             if interest_tags[current_index] == 1:
                 start_index = current_index
                 end_index = current_index+1
