@@ -47,15 +47,23 @@ class Backend:
         interest_clip_tags = self.__get_interest_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
         print(len(interest_clip_tags))
 
+        # print('get_humor_clip_tags')
+        # humor_clip_tags = self.__get_humor_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
+        # print(len(humor_clip_tags))
+
+        # print('get_clickbait_clip_tags')
+        # get_clickbait_clip_tags = self.__get_clickbait_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
+        # print(len(get_clickbait_clip_tags))
+
         # if humor:
         #     pass
 
         # if clickbait:
         #     pass
 
-        clip_names= []
+        interest_clip_names= []
         video = VideoFileClip("videos/" + upload_filename)
-        print('create_tags')
+        print('interest_clips')
         for i in range(len(interest_clip_tags)):
             clip = video.subclip(interest_clip_tags[i]['start'], interest_clip_tags[i]['end'])
 
@@ -73,7 +81,7 @@ class Backend:
 
             clip_name = str(uuid.uuid4())
             clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
-            clip_names.append(clip_name)
+            interest_clip_names.append(clip_name)
         
         self.__clear()
         return clip_names
@@ -88,7 +96,7 @@ class Backend:
 
         clip_tags = []
         current_index = 0
-        while current_index < len(interest_tags)-2:
+        while current_index < len(interest_tags)-3:
             if interest_tags[current_index] == 1:
                 start_index = current_index
                 end_index = current_index+1
