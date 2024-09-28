@@ -37,12 +37,15 @@ class Backend:
 
         print('processing_transcribe')
         tags = self.__processing_transcribe(f'{self.__model_whisper_out_name}.tsv')
+        print(tags)
 
-        print('split_tags_by_sentences')
-        sentences_tags = self.__split_tags_by_sentences(tags)
+        # print('split_tags_by_sentences')
+        # sentences_tags = self.__split_tags_by_sentences(tags)
+        # print(sentences_tags)
 
         print('get_interest_clip_tags')
-        interest_clip_tags = self.__get_interest_clip_tags(sentences_tags=sentences_tags, threshold=threshold, min_length=min_length, max_length=max_length)
+        print(len(tags))
+        interest_clip_tags = self.__get_interest_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
 
         
         # if humor:
