@@ -1,10 +1,7 @@
 FROM python:3.9.6
 
 RUN apt-get update && apt-get install -y ffmpeg
-
-RUN pip install cmake==3.27.0
-RUN apt-get clean && apt-get -y update && apt-get install -y build-essential cmake libopenblas-dev liblapack-dev libopenblas-dev liblapack-dev
-RUN pip install dlib==19.24.2
+RUN apt-get install cmake
 
 COPY requirements.txt .
 # Установка зависимостей (минимизируем вес образа за счёт очистки кеша pip)
