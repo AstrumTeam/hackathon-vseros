@@ -41,7 +41,7 @@ def add_subtitles_to_clip(clip, subtitles):
         ).set_duration(end - start).set_start(start)
         
         # Позиционируем субтитры внизу видео с отступом
-        subtitle_clip = subtitle_clip.set_position(('center', clip.h - 60))  # 'bottom' с отступом 60 пикселей
+        subtitle_clip = subtitle_clip.set_position(('center', clip.h - 100))  # 'bottom' с отступом 60 пикселей
         
         # Добавляем текстовый клип в общий список
         subtitle_clips.append(subtitle_clip)

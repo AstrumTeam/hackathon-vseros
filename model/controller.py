@@ -115,7 +115,7 @@ async def delete_clip_by_id():
             10
         ],
         [
-            "25c629c6-95b3-438c-83a7-db5d69da55a4",
+            "c975d87e-d62d-424f-8000-a538a972cbbf",
             "clickbait",
             10
         ]]}
