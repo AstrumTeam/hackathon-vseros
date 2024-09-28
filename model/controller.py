@@ -8,20 +8,22 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],  # Разрешенные источники (например, ваш Angular-приложение)
+    allow_origins=["http://localhost:4200"],
     allow_credentials=True,
-    allow_methods=["*"],  # Разрешенные методы (например, GET, POST и т.д.)
-    allow_headers=["*"],  # Разрешенные заголовки (например, Content-Type, Authorization и т.д.)
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
 backend = Backend()
 
+#Создаем директорию, если нет
 def ensure_directory_exists(directory: str):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
 
+#Метод генерации виральных видео
 @app.post("/api/create/clips")
 async def get_clips(video: UploadFile,
                     subtitles: str = Form(...),
@@ -32,6 +34,7 @@ async def get_clips(video: UploadFile,
                     threshold: str = Form(...),
                     min_length: int = Form(...),
                     max_length: int = Form(...)):
+    #Получаем данные с фронтенда
     video_data = {
         "subtitles": subtitles.lower() == 'true',
         "fields": fields.lower() == 'true',
@@ -44,6 +47,10 @@ async def get_clips(video: UploadFile,
     }
     file = video
 
+    if not file.content_type.startswith("video/"):
+        raise HTTPException(status_code=400, detail="It's not a video")
+
+    #Создаем директории
     ensure_directory_exists("videos")
     ensure_directory_exists("results")
 
@@ -61,9 +68,12 @@ async def get_clips(video: UploadFile,
                               threshold=video_data["threshold"],
                               min_length=video_data["min_length"],
                               max_length=video_data["max_length"])
+    
     print(clips)
     return {'clips': clips}
 
+
+#Метод получения клипов по id
 @app.get("/api/get/file/id/{file_id}")
 async def get_clip_by_id(file_id: str):
     video_path = f"results/{file_id}.mp4"
@@ -76,6 +86,7 @@ async def get_clip_by_id(file_id: str):
     return FileResponse(video_path, media_type="video/mp4")
 
 
+#Метод удаления клипов по id
 @app.get("/api/delete/file/id/{file_id}")
 async def delete_clip_by_id(file_id: str):
     video_path = f"results/{file_id}.mp4"
@@ -90,7 +101,9 @@ async def delete_clip_by_id(file_id: str):
         return {"message": f"Video {file_id} deleted successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred while deleting the video")
-    
+
+
+#Тестовый методы
 @app.get("/api/test")
 async def delete_clip_by_id():
     return {'clips': [

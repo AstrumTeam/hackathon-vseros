@@ -21,7 +21,7 @@ class Backend:
         self.__clf_interest_model = InterestClassificationModel()
         self.__processing = Processing()
 
-
+        #Модель Speech2Text
         self.__model_whisper = stable_whisper.load_model('large-v2') #large-v3
         self.__audio_file_name = "out_audio"
         self.__model_whisper_out_name = 'transcribe_audio'
@@ -31,16 +31,20 @@ class Backend:
              subtitles = False, fields = True, face_tracking = False,
              humor = False, clickbait = False):
         
+        #Достаем аудио
         self.__get_audio(upload_filename)
+        #Speech2Text
         model_whisper_out = self.__model_whisper.transcribe("videos/" + f'{self.__audio_file_name}.mp3')
         model_whisper_out.to_tsv("videos/" + f'{self.__model_whisper_out_name}.tsv')
 
         print('processing_transcribe')
+        #Форматирование
         tags = self.__processing_transcribe(f'{self.__model_whisper_out_name}.tsv')
         print(tags)
         print(len(tags))
 
         print('split_tags_by_sentences')
+        #Деление на предложения
         sentences_tags = self.__split_tags_by_sentences(tags)
         print(len(sentences_tags))
         print(sentences_tags)
@@ -50,6 +54,7 @@ class Backend:
 
 
         print('get_interest_clip_tags')
+        #Определяем интересные клипы
         interest_clip_tags = self.__get_interest_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
         print(len(interest_clip_tags))
 
@@ -60,14 +65,18 @@ class Backend:
 
 
             if face_tracking == True:
+                #Трекинг лица
                 clip = process_video_clip(clip)
             else:
                 if fields == True:
+                    #Видео с черным полями
                     clip = crop_video_to_9_16_with_fields(clip)
                 else:
+                    #Обрезать видео
                     clip = crop_video_to_9_16(clip)
             
             if subtitles:
+                    #Субтитры
                 subtitles_tags = list(filter(lambda x: x['start'] >= interest_clip_tags[i]['start'] and x['end'] <= interest_clip_tags[i]['end'], tags))
                 clip = add_subtitles_to_clip(clip, subtitles_tags)
 
@@ -80,6 +89,7 @@ class Backend:
         humor_clip_names = []
         if humor:
             print('get_humor_clip_tags')
+            #Определяем клипы с юмором
             humor_clip_tags = self.__get_humor_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
             print(len(humor_clip_tags))
             
@@ -89,14 +99,18 @@ class Backend:
 
 
                 if face_tracking == True:
+                    #Трекинг лица
                     clip = process_video_clip(clip)
                 else:
                     if fields == True:
+                        #Видео с черным полями
                         clip = crop_video_to_9_16_with_fields(clip)
                     else:
+                        #Обрезать видео
                         clip = crop_video_to_9_16(clip)
             
                 if subtitles:
+                    #Субтитры
                     subtitles_tags = list(filter(lambda x: x['start'] >= humor_clip_tags[i]['start'] and x['end'] <= humor_clip_tags[i]['end'], tags))
                     clip = add_subtitles_to_clip(clip, subtitles_tags)
 
@@ -109,6 +123,7 @@ class Backend:
         clickbait_clip_names = []
         if clickbait:
             print('get_clickbait_clip_tags')
+            #Определяем клипы с кликбейтом
             clickbait_clip_tags = self.__get_clickbait_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
             print(len(clickbait_clip_tags))
 
@@ -118,14 +133,18 @@ class Backend:
 
 
                 if face_tracking == True:
+                    #Трекинг лица
                     clip = process_video_clip(clip)
                 else:
                     if fields == True:
+                        #Видео с черным полями
                         clip = crop_video_to_9_16_with_fields(clip)
                     else:
+                        #Обрезать видео
                         clip = crop_video_to_9_16(clip)
             
                 if subtitles:
+                    #Субтитры
                     subtitles_tags = list(filter(lambda x: x['start'] >= clickbait_clip_tags[i]['start'] and x['end'] <= clickbait_clip_tags[i]['end'], tags))
                     clip = add_subtitles_to_clip(clip, subtitles_tags)
 
@@ -133,6 +152,7 @@ class Backend:
                 clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
                 clickbait_clip_names.append(clip_name)
 
+        #Объединяем в один массив
         all_clips = []
         for clip in interest_clip_names:
             all_clips.append([clip, 'interest', 10])
@@ -143,6 +163,7 @@ class Backend:
         for clip in clickbait_clip_names:
             all_clips.append([clip, 'clickbait', 10])
         
+        #Удаляем временные файлы
         self.__clear()
         return all_clips
     
@@ -180,7 +201,6 @@ class Backend:
     def __get_humor_clip_tags(self, sentences_tags, threshold, min_length, max_length):
         sentences = [x['text'] for x in sentences_tags]
         sentences_interest = self.__clf_interest_model.predict(sentences)
-        print()
 
         interest_tags =  self.__normalize(sentences_interest, threshold)
 
@@ -211,7 +231,6 @@ class Backend:
     def __get_clickbait_clip_tags(self, sentences_tags, threshold, min_length, max_length):
         sentences = [x['text'] for x in sentences_tags]
         sentences_interest = self.__clf_interest_model.predict(sentences)
-        print()
 
         interest_tags =  self.__normalize(sentences_interest, threshold)
 
@@ -242,11 +261,12 @@ class Backend:
         audioclip = AudioFileClip("videos/" + file)
         audioclip.write_audiofile("videos/" + f'{self.__audio_file_name}.wav')
 
+        #Нормализуем и сохраняем в mp3
         norm_sound = AudioSegment.from_file("videos/" + f'{self.__audio_file_name}.wav', format='wav')
         norm_sound = effects.normalize(norm_sound)
         norm_sound.export("videos/" + f'{self.__audio_file_name}.mp3', format='mp3')
 
-
+    #Форматирование
     def __processing_transcribe(self, file):
         tags = []
         tsv_file = open("videos/" + file)
@@ -261,6 +281,7 @@ class Backend:
                 })
         return tags
     
+    #Делим на предложения, если их достаточно
     def __split_tags_by_sentences(self, tags):
         all_text = ' '.join([x['text'] for x in tags])
         sentences_tags = []
@@ -296,17 +317,22 @@ class Backend:
                         end += 1
         return sentences_tags
     
+    #Сглаживаем результат работы модели
     def __normalize(self, pred, threshold=0.5):
         pred_soft = []
         pred_soft = pred_soft + pred[:4]
+        #Усредняем близкие текста
         for i in range(4, len(pred)-4):
             new_i = (pred[i-4] + pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3] + pred[i+4])/9
             pred_soft.append(new_i)
         pred_soft = pred_soft + pred[-4:]
-            
+
+        #Сглаживание по гауссу
         soft = gaussian_filter(pred_soft, sigma=.8)
+        #Скейлим от 0 до 1
         soft_min_max = minmax_scale(soft, feature_range=(0,1))
 
+        #Проверяем по порогу
         result = []
         for tag in soft_min_max:
             if tag >= threshold:
@@ -315,6 +341,7 @@ class Backend:
                 result.append(0)
         return result
     
+    #Удаляем временные файлы
     def __clear(self):
         if os.path.exists("videos"):
             try:

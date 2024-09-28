@@ -2,6 +2,7 @@ import torch
 from transformers import AutoTokenizer, AutoModel
 
 
+#Encoder для моделей
 class Encoder:
     def __init__(self):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -16,7 +17,7 @@ class Encoder:
             embeddings = torch.nn.functional.normalize(embeddings)
         return embeddings
 
-
+#Классификация по интересу
 class InterestClassificationModel:
     def __init__(self):
         print("Cuda is:" + str(torch.cuda.is_available()))
@@ -46,6 +47,7 @@ class InterestClassificationModel:
         return pred
 
 
+#Классификация по юмору
 class HumorClassificationModel:
     def __init__(self):
         print("Cuda is:" + str(torch.cuda.is_available()))
@@ -75,6 +77,7 @@ class HumorClassificationModel:
         return pred
 
 
+#Классификация по кликбейту
 class ClickbaitClassificationModel:
     def __init__(self):
         print("Cuda is:" + str(torch.cuda.is_available()))

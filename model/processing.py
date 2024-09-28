@@ -8,6 +8,7 @@ class Processing:
     def __init__(self):
         self.__segmenter = Segmenter()
 
+    #Разделение по предложениям
     def split_by_sentences(self, text):
         doc = Doc(text)
         doc.segment(self.__segmenter)

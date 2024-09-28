@@ -1,5 +1,6 @@
 from moviepy.editor import TextClip, CompositeVideoClip
 from moviepy.config import change_settings
+
 change_settings({"IMAGEMAGICK_BINARY": "/usr/bin/convert"})
 
 def add_subtitles_to_clip(clip, subtitles):
