@@ -7,9 +7,10 @@ yt-dlp # --no-deps -U
 natasha
 opencv-python-headless
 opencv-python
-wheel 
+wheel
 cmake
 dlib
+# setuptools
 
 stable-ts
 

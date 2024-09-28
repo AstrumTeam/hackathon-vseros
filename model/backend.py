@@ -14,6 +14,7 @@ from models import InterestClassificationModel
 from processing import Processing
 from video_cropping import crop_video_to_9_16, crop_video_to_9_16_with_fields
 from face_traking import process_video_clip
+from subtitles import add_subtitles_to_clip
 
 class Backend:
     def __init__(self):
@@ -69,8 +70,8 @@ class Backend:
                 elif face_tracking:
                     clip = crop_video_to_9_16(clip)
             
-            # if subtitles:
-            #     pass
+            if subtitles:
+                clip = add_subtitles_to_clip(clip,interest_clip_tags[i]['subtitles'])
 
             clip_name = str(uuid.uuid4())
             clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
@@ -84,6 +85,37 @@ class Backend:
     
     
     def __get_interest_clip_tags(self, sentences_tags, threshold, min_length, max_length):
+        sentences = [x['text'] for x in sentences_tags]
+        sentences_interest = self.__clf_interest_model.predict(sentences)
+        print(sentences_interest)
+
+        interest_tags =  self.__normalize(sentences_interest, threshold)
+
+        clip_tags = []
+        current_index = 0
+        while current_index <= len(interest_tags)-1:
+            if interest_tags[current_index] == 1:
+                start_index = current_index
+                end_index = current_index+1
+                if interest_tags[end_index] == 1:
+                    while interest_tags[end_index+1] == 1:
+                        end_index = end_index+1
+
+                    time_start = sentences_tags[start_index]['start']
+                    time_end = sentences_tags[end_index]['end']
+
+                    if time_end - time_start >= min_length and time_end - time_start <= max_length:
+                        clip = {'start': time_start, 'end': time_end, 'subtitles': sentences_tags[start_index:end_index+1]}
+                        clip_tags.append(clip)
+                current_index = end_index+1
+            else:
+                current_index +=1
+
+        return clip_tags
+
+    
+    
+    def __get_humor_clip_tags(self, sentences_tags, threshold, min_length, max_length):
         sentences = [x['text'] for x in sentences_tags]
         sentences_interest = self.__clf_interest_model.predict(sentences)
         print()
@@ -111,11 +143,10 @@ class Backend:
                 current_index +=1
 
         return clip_tags
-    
 
     
     
-    def __get_humor_clip_tags(self, sentences_tags, threshold, min_length, max_length):
+    def __get_clickbait_clip_tags(self, sentences_tags, threshold, min_length, max_length):
         sentences = [x['text'] for x in sentences_tags]
         sentences_interest = self.__clf_interest_model.predict(sentences)
         print()
