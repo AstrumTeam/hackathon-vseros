@@ -57,7 +57,6 @@ class Backend:
         #Определяем интересные клипы
         interest_clip_tags = self.__get_interest_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
         print(len(interest_clip_tags))
-        print(interest_clip_tags)
 
         interest_clip_names= []
         print('interest_clips')
@@ -173,6 +172,7 @@ class Backend:
     def __get_interest_clip_tags(self, sentences_tags, threshold, min_length, max_length):
         sentences = [x['text'] for x in sentences_tags]
         sentences_interest = self.__clf_interest_model.predict(sentences)
+        print(sentences_interest)
 
         interest_tags =  self.__normalize(sentences_interest, threshold)
 
@@ -313,7 +313,6 @@ class Backend:
                         sentences_tags.append(sentence_tag)
                         stop_flag = True
                     else:
-                        print(end, new_clip_text)
                         clip_text = new_clip_text
                         end += 1
         return sentences_tags
