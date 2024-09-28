@@ -53,3 +53,54 @@ ng serve
 
 - [Документация Angular](https://angular.io/docs)
 - [Angular CLI](https://angular.io/cli)
+
+
+# Запуск Backend приложения в проекте
+
+Этот репозиторий содержит backend-приложение, разработанное на **Python** версии **3.9.6**. В этом README описаны шаги по установке, запуску и работе с проектом.
+
+## Требования
+
+Перед началом работы убедитесь, что на вашем компьютере установлены следующие инструменты:
+
+- **Python** версии **3.9.6**
+
+- **ffmmpeg**, **cmake** и **imagemagick**
+  
+- **Необходимые зависимости**
+```
+cd backend
+pip install -r requirements.txt
+```
+
+## Запуск проекта
+
+### Docker
+Пример
+```
+docker build -t astrum-backend-image .
+```
+
+### Локально
+```
+cd backend
+uvicorn controller:app --host 0.0.0.0 --port 8080 --reloadD
+```
+
+По умолчанию, приложение будет доступно по всем `http://localhost:8080/`.
+
+## Структура проекта
+
+- `train_interest/` — Файлы для обучения модели интереса. 
+- `train_humor/` — Файлы для обучения модели юмора. 
+- `controller.py` — Http методы бэкэнда. 
+- `backend.py` — Главный файл с логикой.
+- `models.py` — Файл с моделями.
+- `processing.py` — Работа с текстом.
+- `face_traking.py` — Трекинг лица.
+- `subtitles.py` — Добавление субтитров у видео.
+- `video_cropping.py` — Обрезка видео.
+
+
+
+
