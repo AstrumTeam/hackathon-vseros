@@ -288,6 +288,7 @@ class Backend:
                         sentences_tags.append(sentence_tag)
                         stop_flag = True
                     else:
+                        print(end, new_clip_text)
                         clip_text = new_clip_text
                         end += 1
         return sentences_tags
