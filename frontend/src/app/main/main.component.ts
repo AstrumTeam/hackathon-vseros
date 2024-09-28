@@ -12,6 +12,8 @@ export class MainComponent {
 
   clips: string[] = [];
 
+  loading: boolean = false;
+
   video: Video = {
     subtitles: false,
     fields: false,
@@ -114,10 +116,13 @@ export class MainComponent {
 
   upload(){
     this.showSettings = !this.showSettings;
+    this.loading = true;
     this.service.addVideo(this.video).subscribe((data: any) => {
       console.log('ОТВЕТ СЕРВЕРА',data)
       this.clips = data;
-      this.router.navigate([`/results`], { queryParams: { clips: JSON.stringify(this.clips) } });
+      this.loading = false;
+      this.service.clips = data;
+      this.router.navigate([`/results`]);
     });
 
     this.startGeneration();

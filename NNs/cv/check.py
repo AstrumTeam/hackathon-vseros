@@ -4,6 +4,7 @@ from scene_detection_module import detect_scenes
 import os
 from video_cropping import crop_video_to_9_16, crop_video_to_9_16_with_fields
 import moviepy.editor as mp
+from make_subtitles import add_subtitles_to_clip
 
 input_video_path = "/Users/vladislav/Временное/musk_cutted.mp4"  # Укажите путь к вашему видео
 output_video_path = "/Users/vladislav/Временное/output_video.mp4"  # Путь для сохранения обработанного видео
@@ -105,12 +106,35 @@ output_video_path = "/Users/vladislav/Временное/output_video.mp4"  # П
 # except Exception as e:
 #     print(f"Произошла ошибка: {e}")
 
+# try:
+#     # Чтение видео с помощью MoviePy
+#     video_clip = mp.VideoFileClip(input_video_path)
+
+#     # Обработка видео
+#     processed_clip = process_video_clip(video_clip)
+
+#     if processed_clip:
+#         # Сохранение обработанного видео в файл
+#         processed_clip.write_videofile(output_video_path, codec='libx264', audio_codec='aac')
+#         print(f"Обработанное видео сохранено в {output_video_path}")
+#     else:
+#         print("Ошибка при обработке видео.")
+# except Exception as e:
+#     print(f"Произошла ошибка: {e}")
+
+#СУБТИТРЫ
+subtitles = [
+        {"start": 1, "end": 3, "text": "Привет, мир!"},
+        {"start": 4, "end": 6, "text": "Как дела?"},
+        {"start": 7, "end": 10, "text": "Это пример субтитров."}
+    ]
+
 try:
     # Чтение видео с помощью MoviePy
     video_clip = mp.VideoFileClip(input_video_path)
 
     # Обработка видео
-    processed_clip = crop_video_to_9_16_with_fields(video_clip)
+    processed_clip = add_subtitles_to_clip(video_clip, subtitles)
 
     if processed_clip:
         # Сохранение обработанного видео в файл

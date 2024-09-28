@@ -25,41 +25,13 @@ export interface ServerResponse{
 export class MainService {
   videos: Blob[] = [];
 
+  clips: string[] = [];
+
   constructor(
     private httpClient: HttpClient,
   ) { }
 
-  private baseUrl = 'https://19e7-83-220-236-131.ngrok-free.app';
-
-  downloadAndExtract() {
-    this.downloadVideos().subscribe((zipBlob: Blob) => {
-      const zipReader = new JSZip();
-
-      // Загружаем ZIP-файл в JSZip
-      zipReader.loadAsync(zipBlob).then((zip) => {
-        // Явно указываем тип для videoPromises
-        const videoPromises: Promise<Blob>[] = [];
-
-        // Проходим по всем файлам в ZIP-архиве
-        zip.forEach((relativePath, zipEntry) => {
-          // Проверяем, является ли файл видео
-          if (zipEntry.name.endsWith('.mp4')) {
-            const videoPromise = zipEntry.async('blob').then((blob) => {
-              // Возвращаем blob-объект для видео
-              return blob; // Возвращаем Blob для видео
-            });
-            videoPromises.push(videoPromise);
-          }
-        });
-
-        // Ждем, пока все видео будут распакованы
-        Promise.all(videoPromises).then((videoBlobs) => {
-          this.videos = videoBlobs; // Записываем Blob-объекты в массив
-          console.log('Video files:', this.videos); // Выводим в консоль
-        });
-      });
-    });
-  }
+  private baseUrl = 'https://8d0c-83-220-236-222.ngrok-free.app';
 
   addVideo(videoData: Video): Observable<ServerResponse> {
     const formData = new FormData();
@@ -89,6 +61,6 @@ export class MainService {
   }
 
   generate(data: Video){
-    console.log(data)
+
   }
 }

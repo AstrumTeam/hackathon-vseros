@@ -15,7 +15,7 @@
     
     
     
-    <div *ngIf="!showSettings">
+    <div *ngIf="!showSettings && !loading">
       <div class="instruction">
         Загрузите свое видео, а мы сделаем из него множество интересных клипов с нужными вам настройками.
       </div>
@@ -51,7 +51,7 @@
       </button>
     </div>
     
-    <div *ngIf="showSettings" style="width: 75%; margin:0 auto;">
+    <div *ngIf="showSettings && !loading" style="width: 75%; margin:0 auto;">
         <div class="settings_text">Размер используемой модели</div>
         <div style="display: flex; margin: 0 auto; justify-content: center; margin-top: 10px;">
           <div (click)="showSizesEvent()" class="drop_menu">
@@ -151,9 +151,7 @@
         </div>
     </div>
     
-    <!-- <div *ngIf="showResult && !showSettings">
-  
-      <div>
+    <div *ngIf="loading" style="margin-top: 200px;">
         <div style="display: flex; margin: 0 auto; justify-content: center;">
           <div class="loader"></div> 
         </div>
@@ -164,25 +162,6 @@
         <div class="settings_text">
           Это может занять до 99 лет
         </div>
-    
-        <div class="description">
-          Вот что у нас получилось:
-        </div>
-      </div>
-  
-      <div>
-        <div style="margin-top: 10px; text-align: center;">
-          <button class="upload_btn">
-            Скачать архив
-          </button>
-        </div>
-      
-        <div style="margin-top: 10px; text-align: center;">
-          <button class="inverse_btn" (click)="again()">
-            Загрузить еще видео
-          </button>
-        </div>
-      </div>
-    </div> -->
+    </div>
     
   </div>
