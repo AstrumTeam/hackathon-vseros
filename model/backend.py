@@ -227,7 +227,7 @@ class Backend:
     def __normalize(self, pred, threshold=0.5):
         pred_soft = []
         pred_soft = pred_soft + pred[:4]
-        for i in range(3, len(pred)-3):
+        for i in range(4, len(pred)-4):
             new_i = (pred[i-4] + pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3] + pred[i+4])/9
             pred_soft.append(new_i)
         pred_soft = pred_soft + pred[-4:]
