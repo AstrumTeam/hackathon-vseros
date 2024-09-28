@@ -68,7 +68,8 @@ class Backend:
                     clip = crop_video_to_9_16(clip)
             
             if subtitles:
-                clip = add_subtitles_to_clip(clip, interest_clip_tags[i]['subtitles'])
+                subtitles_tags = filter(lambda x: x['start'] >= interest_clip_tags[i]['start'] and x['end'] <= interest_clip_tags[i]['end'], tags)
+                clip = add_subtitles_to_clip(clip, subtitles_tags)
 
             clip_name = str(uuid.uuid4())
             clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
@@ -94,9 +95,10 @@ class Backend:
                         clip = crop_video_to_9_16_with_fields(clip)
                     else:
                         clip = crop_video_to_9_16(clip)
-                
+            
                 if subtitles:
-                    clip = add_subtitles_to_clip(clip, humor_clip_tags[i]['subtitles'])
+                    subtitles_tags = filter(lambda x: x['start'] >= humor_clip_tags[i]['start'] and x['end'] <= humor_clip_tags[i]['end'], tags)
+                    clip = add_subtitles_to_clip(clip, subtitles_tags)
 
                 clip_name = str(uuid.uuid4())
                 clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
@@ -122,9 +124,10 @@ class Backend:
                         clip = crop_video_to_9_16_with_fields(clip)
                     else:
                         clip = crop_video_to_9_16(clip)
-                
+            
                 if subtitles:
-                    clip = add_subtitles_to_clip(clip, clickbait_clip_tags[i]['subtitles'])
+                    subtitles_tags = filter(lambda x: x['start'] >= clickbait_clip_tags[i]['start'] and x['end'] <= clickbait_clip_tags[i]['end'], tags)
+                    clip = add_subtitles_to_clip(clip, subtitles_tags)
 
                 clip_name = str(uuid.uuid4())
                 clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
