@@ -22,7 +22,7 @@ class Backend:
         self.__processing = Processing()
 
 
-        self.__model_whisper = stable_whisper.load_model('large-v3') #large-v3
+        self.__model_whisper = stable_whisper.load_model('large-v2') #large-v3
         self.__audio_file_name = "out_audio"
         self.__model_whisper_out_name = 'transcribe_audio'
 
@@ -46,7 +46,7 @@ class Backend:
         print('get_interest_clip_tags')
         print(len(tags))
         interest_clip_tags = self.__get_interest_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
-
+        print(len(interest_clip_tags))
         
         # if humor:
         #     pass
@@ -235,10 +235,9 @@ class Backend:
         pred_soft = []
         pred_soft = pred_soft + pred[:3]
         for i in range(3, len(pred)-3):
-            # new_i = (pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3])/7
-            new_i = (pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2])/5
+            new_i = (pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3])/7
             pred_soft.append(new_i)
-        pred_soft = pred_soft + pred[-4:]
+        pred_soft = pred_soft + pred[-3:]
             
         soft = gaussian_filter(pred_soft, sigma=.8)
         soft_min_max = minmax_scale(soft, feature_range=(0,1))
