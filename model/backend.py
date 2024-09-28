@@ -42,6 +42,7 @@ class Backend:
         print('split_tags_by_sentences')
         sentences_tags = self.__split_tags_by_sentences(tags)
         print(len(sentences_tags))
+        print(sentences_tags)
 
 
         video = VideoFileClip("videos/" + upload_filename)
@@ -278,7 +279,7 @@ class Backend:
                 count_sentences = len(self.__processing.split_by_sentences(clip_text))
 
                 stop_flag = False
-                while stop_flag == False:
+                while stop_flag == False or end != len(tags)-1:
                     print(str(current_index) + ' 3')
                     new_clip_text = ' '.join([x['text'] for x in tags[start:end+1]])
                     new_count_sentences = len(self.__processing.split_by_sentences(new_clip_text))
