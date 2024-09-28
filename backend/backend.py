@@ -10,7 +10,7 @@ from sklearn.preprocessing import minmax_scale
 import shutil
 import uuid
 
-from models import InterestClassificationModel
+from models import InterestClassificationModel, HumorClassificationModel, ClickbaitClassificationModel
 from processing import Processing
 from video_cropping import crop_video_to_9_16, crop_video_to_9_16_with_fields
 from face_traking import process_video_clip
@@ -19,6 +19,8 @@ from subtitles import add_subtitles_to_clip
 class Backend:
     def __init__(self):
         self.__clf_interest_model = InterestClassificationModel()
+        self.__clf_humor_model = HumorClassificationModel()
+        self.__clf_clickbait_model = ClickbaitClassificationModel()
         self.__processing = Processing()
 
         #Модель Speech2Text
@@ -201,7 +203,7 @@ class Backend:
     
     def __get_humor_clip_tags(self, sentences_tags, threshold, min_length, max_length):
         sentences = [x['text'] for x in sentences_tags]
-        sentences_interest = self.__clf_interest_model.predict(sentences)
+        sentences_interest = self.__clf_humor_model.predict(sentences)
 
         interest_tags =  self.__normalize(sentences_interest, threshold)
 
@@ -231,7 +233,7 @@ class Backend:
     
     def __get_clickbait_clip_tags(self, sentences_tags, threshold, min_length, max_length):
         sentences = [x['text'] for x in sentences_tags]
-        sentences_interest = self.__clf_interest_model.predict(sentences)
+        sentences_interest = self.__clf_clickbait_model.predict(sentences)
 
         interest_tags =  self.__normalize(sentences_interest, threshold)
 
