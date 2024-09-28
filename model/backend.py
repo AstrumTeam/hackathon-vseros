@@ -198,7 +198,7 @@ class Backend:
     def __split_tags_by_sentences(self, tags):
         sentences_tags = []
         current_index = 0
-        while current_index <= len(tags)-2:
+        while current_index <= len(tags)-3:
             start, end = current_index, current_index+2
             clip_text = ''.join([x['text']+' ' for x in tags[start:end+1]])
             sentence_tag = {'start': tags[start]['start'], 'end': tags[end]['end'], 'text': clip_text}
