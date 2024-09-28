@@ -16,13 +16,14 @@ def add_subtitles_to_clip(clip, subtitles):
     Возвращает:
     Новый клип с наложенными субтитрами внизу.
     """
+    absolute_start = subtitles[0]['start']
     
     # Создаем список клипов для субтитров
     subtitle_clips = []
     
     for subtitle in subtitles:
-        start = subtitle['start']
-        end = subtitle['end']
+        start = subtitle['start'] - absolute_start
+        end = subtitle['end'] - absolute_start
         text = subtitle['text']
 
         rgb_color = (209, 183, 53)  # Красный

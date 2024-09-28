@@ -257,37 +257,39 @@ class Backend:
         return tags
     
     def __split_tags_by_sentences(self, tags):
-        sentences_tags = []
-        current_index = 0
-        while current_index <= len(tags)-3:
-            start, end = current_index, current_index+2
-            clip_text = ''.join([x['text']+' ' for x in tags[start:end+1]])
-            sentence_tag = {'start': tags[start]['start'], 'end': tags[end]['end'], 'text': clip_text}
-            sentences_tags.append(sentence_tag)
-            current_index = end+1
-        return sentences_tags
+        all_text = ''.join([x['text']+' ' for x in tags])
+        if (len(self.__processing.split_by_sentences(all_text)) < 20):
+            sentences_tags = []
+            current_index = 0
+            while current_index <= len(tags)-3:
+                start, end = current_index, current_index+2
+                clip_text = ''.join([x['text']+' ' for x in tags[start:end+1]])
+                sentence_tag = {'start': tags[start]['start'], 'end': tags[end]['end'], 'text': clip_text}
+                sentences_tags.append(sentence_tag)
+                current_index = end+1
+            return sentences_tags
+        else:
+            current_index = 0
+            while current_index <= len(tags)-2:
+                start, end = current_index, current_index+1
 
-        # current_index = 0
-        # while current_index <= len(tags)-2:
-        #     start, end = current_index, current_index+1
+                clip_text = tags[start]['text']
+                count_sentences = len(self.__processing.split_by_sentences(clip_text))
 
-        #     clip_text = tags[start]['text']
-        #     count_sentences = len(self.__processing.split_by_sentences(clip_text))
+                stop_flag = False
+                while stop_flag == False:
+                    new_clip_text = ''.join([x['text']+' ' for x in tags[start:end+1]])
+                    new_count_sentences = len(self.__processing.split_by_sentences(new_clip_text))
 
-        #     stop_flag = False
-        #     while stop_flag == False:
-        #         new_clip_text = ''.join([x['text']+' ' for x in tags[start:end+1]])
-        #         new_count_sentences = len(self.__processing.split_by_sentences(new_clip_text))
-
-        #         if new_count_sentences != count_sentences:
-        #             current_index = end
-        #             sentence_tag = {'start': tags[start]['start'], 'end': tags[end-1]['end'], 'text': clip_text}
-        #             sentences_tags.append(sentence_tag)
-        #             stop_flag = True
-        #         else:
-        #             clip_text = new_clip_text
-        #             end += 1
-        # return sentences_tags
+                    if new_count_sentences != count_sentences:
+                        current_index = end
+                        sentence_tag = {'start': tags[start]['start'], 'end': tags[end-1]['end'], 'text': clip_text}
+                        sentences_tags.append(sentence_tag)
+                        stop_flag = True
+                    else:
+                        clip_text = new_clip_text
+                        end += 1
+            return sentences_tags
     
     def __normalize(self, pred, threshold=0.5):
         pred_soft = []
