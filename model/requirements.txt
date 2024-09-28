@@ -5,6 +5,9 @@ moviepy
 pydub
 yt-dlp # --no-deps -U 
 natasha
+opencv-python-headless
+opencv-python
+wheel
 
 stable-ts
 

@@ -1,42 +1,92 @@
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 from moviepy.editor import AudioFileClip, VideoFileClip
 from pydub import AudioSegment, effects
 import csv
 import stable_whisper
 from scipy.ndimage.filters import gaussian_filter
 from sklearn.preprocessing import minmax_scale
+import shutil
+import uuid
 
 from models import InterestClassificationModel
 from processing import Processing
-import os
+from video_cropping import crop_video_to_9_16, crop_video_to_9_16_with_fields
+from face_traking import process_video_clip
 
 class Backend:
     def __init__(self):
-        print('1')
         self.__clf_interest_model = InterestClassificationModel()
-        print('2')
         self.__processing = Processing()
-        print('3')
 
 
         self.__model_whisper = stable_whisper.load_model('large-v3') #large-v3
-        print('4')
         self.__audio_file_name = "out_audio"
         self.__model_whisper_out_name = 'transcribe_audio'
 
     def work(self, upload_filename, 
              threshold = 0.5, min_length = 10, max_length = 60, 
-             subtitles = False, fields = False, face_tracking = False,
+             subtitles = False, fields = True, face_tracking = False,
              humor = False, clickbait = False):
         
         self.__get_audio(upload_filename)
         model_whisper_out = self.__model_whisper.transcribe("videos/" + f'{self.__audio_file_name}.mp3')
         model_whisper_out.to_tsv("videos/" + f'{self.__model_whisper_out_name}.tsv')
 
+        print('processing_transcribe')
         tags = self.__processing_transcribe(f'{self.__model_whisper_out_name}.tsv')
-        sentences_tags = self.__split_tags_by_sentences(tags)
+        print(tags)
 
+        print('split_tags_by_sentences')
+        sentences_tags = self.__split_tags_by_sentences(tags)
+        print(sentences_tags)
+
+        print('get_interest_clip_tags')
+        interest_clip_tags = self.__get_interest_clip_tags(sentences_tags=sentences_tags, threshold=threshold, min_length=min_length, max_length=max_length)
+        print(interest_clip_tags)
+
+        
+        # if humor:
+        #     pass
+
+        # if clickbait:
+        #     pass
+
+        clip_names= []
+        video = VideoFileClip("videos/" + upload_filename)
+        print('create_tags')
+        for i in range(len(interest_clip_tags)):
+            print(interest_clip_tags[i])
+            clip = video.subclip(interest_clip_tags[i]['start'], interest_clip_tags[i]['end'])
+
+            print(face_tracking, fields)
+            if face_tracking == True:
+                clip = process_video_clip(clip)
+            else:
+                if fields == True:
+                    clip = crop_video_to_9_16_with_fields(clip)
+                elif face_tracking:
+                    clip = crop_video_to_9_16(clip)
+            
+            # if subtitles:
+            #     pass
+
+            clip_name = str(uuid.uuid4())
+            clip.write_videofile('results/' + clip_name + '.mp4', fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
+            clip_names.append(clip_name)
+        
+        self.__clear()
+        print('result')
+        print(clip_names)
+        return clip_names
+    
+    
+    
+    def __get_interest_clip_tags(self, sentences_tags, threshold, min_length, max_length):
         sentences = [x['text'] for x in sentences_tags]
         sentences_interest = self.__clf_interest_model.predict(sentences)
+        print()
 
         interest_tags =  self.__normalize(sentences_interest, threshold)
 
@@ -60,17 +110,39 @@ class Backend:
             else:
                 current_index +=1
 
-        clip_names= []
-        video = VideoFileClip("videos/" + upload_filename)
-        for i in range(len(clip_tags)):
-            clip = video.subclip(clip_tags[i]['start'], clip_tags[i]['end'])
+        return clip_tags
+    
 
-            upload_name = upload_filename.split('.')[0]
-            clip_name = f'videos/{upload_name}_{i}.mp4'
-            clip.write_videofile(clip_name, fps=30, threads=1, codec="libx264", audio=True, audio_codec="aac")
-            clip_names.append(clip_name)
-        
-        return clip_names
+    
+    
+    def __get_humor_clip_tags(self, sentences_tags, threshold, min_length, max_length):
+        sentences = [x['text'] for x in sentences_tags]
+        sentences_interest = self.__clf_interest_model.predict(sentences)
+        print()
+
+        interest_tags =  self.__normalize(sentences_interest, threshold)
+
+        clip_tags = []
+        current_index = 0
+        while current_index <= len(interest_tags)-1:
+            if interest_tags[current_index] == 1:
+                start_index = current_index
+                end_index = current_index+1
+                if interest_tags[end_index] == 1:
+                    while interest_tags[end_index+1] == 1:
+                        end_index = end_index+1
+
+                    time_start = sentences_tags[start_index]['start']
+                    time_end = sentences_tags[end_index]['end']
+
+                    if time_end - time_start >= min_length and time_end - time_start <= max_length:
+                        clip = {'start': time_start, 'end': time_end, 'subtitles': sentences_tags[start_index:end_index+1]}
+                        clip_tags.append(clip)
+                current_index = end_index+1
+            else:
+                current_index +=1
+
+        return clip_tags
 
 
     def __get_audio(self, file):
@@ -124,7 +196,8 @@ class Backend:
         pred_soft = []
         pred_soft = pred_soft + pred[:3]
         for i in range(3, len(pred)-3):
-            new_i = (pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3])/9
+            # new_i = (pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3])/7
+            new_i = (pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2])/5
             pred_soft.append(new_i)
         pred_soft = pred_soft + pred[-4:]
             
@@ -138,3 +211,10 @@ class Backend:
             else:
                 result.append(0)
         return result
+    
+    def __clear(self):
+        if os.path.exists("videos"):
+            try:
+                shutil.rmtree("videos")
+            except Exception as e:
+                print("/videos not deleted")

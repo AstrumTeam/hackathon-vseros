@@ -1,7 +1,12 @@
 FROM python:3.9.6
 
-COPY requirements.txt .
+RUN apt-get update && apt-get install -y ffmpeg
 
+RUN pip install cmake==3.27.0
+RUN apt-get clean && apt-get -y update && apt-get install -y build-essential cmake libopenblas-dev liblapack-dev libopenblas-dev liblapack-dev
+RUN pip install dlib==19.24.2
+
+COPY requirements.txt .
 # Установка зависимостей (минимизируем вес образа за счёт очистки кеша pip)
 RUN pip install --no-cache-dir --default-timeout=600 -r requirements.txt
 # Копируем код проекта в рабочую директорию контейнера

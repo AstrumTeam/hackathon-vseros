@@ -1,12 +1,19 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import StreamingResponse
-from functools import wraps
+from fastapi import FastAPI, UploadFile, HTTPException, Form
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from backend import Backend
-from io import BytesIO
-import zipfile
 import os
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],  # Разрешенные источники (например, ваш Angular-приложение)
+    allow_credentials=True,
+    allow_methods=["*"],  # Разрешенные методы (например, GET, POST и т.д.)
+    allow_headers=["*"],  # Разрешенные заголовки (например, Content-Type, Authorization и т.д.)
+)
+
 
 backend = Backend()
 
@@ -14,40 +21,71 @@ def ensure_directory_exists(directory: str):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-def video_file_required(func):
-    @wraps(func)
-    async def wrapper(file: UploadFile = File(...)):
-        # Проверка MIME-типа файла
-        if not file.content_type.startswith('video/'):
-            raise HTTPException(status_code=400, detail="Uploaded file is not a valid video format.")
-        
-        # Если файл корректен, продолжаем выполнение оригинальной функции
-        return await func(file)
-    
-    return wrapper
 
+@app.post("/api/create/clips")
+async def get_clips(video: UploadFile,
+                    subtitles: str = Form(...),
+                    fields: str = Form(...),
+                    face_tracking: str = Form(...),
+                    humor: str = Form(...),
+                    clickbait: str = Form(...),
+                    threshold: str = Form(...),
+                    min_length: int = Form(...),
+                    max_length: int = Form(...)):
+    video_data = {
+        "subtitles": subtitles.lower() == 'true',
+        "fields": fields.lower() == 'true',
+        "face_tracking": face_tracking.lower() == 'true',
+        "humor": humor.lower() == 'true',
+        "clickbait": clickbait.lower() == 'true',
+        "threshold": float(threshold),
+        "min_length": min_length,
+        "max_length": max_length,
+    }
+    file = video
 
-@app.post("/api/get/clips")
-async def get_clips(file: UploadFile):
     ensure_directory_exists("videos")
+    ensure_directory_exists("results")
 
     file_location = f"videos/{file.filename}"
     
     with open(file_location, "wb") as video:
         video.write(await file.read())
     
-    clip_names = backend.work(file.filename)
-    # clip_names = []
+    clip_names = backend.work(file.filename,
+                              subtitles=video_data["subtitles"],
+                              fields=video_data["fields"],
+                              face_tracking=video_data["face_tracking"],
+                              humor=video_data["humor"],
+                              clickbait=video_data["clickbait"],
+                              threshold=video_data["threshold"],
+                              min_length=video_data["min_length"],
+                              max_length=video_data["max_length"])
+    return {'clips': clip_names}
 
-    zip_buffer = BytesIO()
-    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
-        for clip_name in clip_names:
-            if os.path.exists(clip_name):
-                with open(clip_name, "rb") as file:
-                    zip_file.writestr(os.path.basename(clip_name), file.read())
-            else:
-                return {"error": f"File {clip_name} not found"}
+@app.get("/api/get/file/id/{file_id}")
+async def get_clip_by_id(file_id: str):
+    video_path = f"results/{file_id}.mp4"
+    
+    # Проверяем, существует ли файл
+    if not os.path.exists(video_path):
+        raise HTTPException(status_code=404, detail="Video not found")
+    
+    # Отдаём файл через FileResponse
+    return FileResponse(video_path, media_type="video/mp4")
 
-    zip_buffer.seek(0)
 
-    return StreamingResponse(zip_buffer, media_type="application/x-zip-compressed", headers={"Content-Disposition": "attachment; filename=clips.zip"})
+@app.get("/api/delete/file/id/{file_id}")
+async def delete_clip_by_id(file_id: str):
+    video_path = f"results/{file_id}.mp4"
+    
+    # Проверяем, существует ли файл
+    if not os.path.exists(video_path):
+        raise HTTPException(status_code=404, detail="Video not found")
+    
+    try:
+        # Удаляем файл
+        os.remove(video_path)
+        return {"message": f"Video {file_id} deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An error occurred while deleting the video")
