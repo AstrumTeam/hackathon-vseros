@@ -1,0 +1,188 @@
+<div class="container">
+    <div style="display: flex; margin: 0 auto; justify-content: center;">
+      <div class="astrum">
+        astrum
+      </div>
+      <div class="point"></div>
+      <div class="studio">Studio</div>
+    </div>
+    
+    <div class="description">
+      Генерация виральных клипов
+    </div>
+    
+    <div style="height: 50px;"></div>
+    
+    
+    
+    <div *ngIf="!showSettings">
+      <div class="instruction">
+        Загрузите свое видео, а мы сделаем из него множество интересных клипов с нужными вам настройками.
+      </div>
+  
+      <div style="text-align: center; margin: 0 auto; margin-top: 30px;">
+        <div class="upload-container"
+             (click)="fileInput.click()"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)"
+             [class.drag-over]="isDragOver">
+             
+          <input 
+            type="file" 
+            #fileInput 
+            accept="video/*" 
+            (change)="onFileSelected($event)" 
+            style="display: none;" 
+          />
+          
+          <ng-container *ngIf="!isVideoUploaded; else uploadedTemplate">
+            <p>Перетащите видео сюда или нажмите для выбора файла</p>
+          </ng-container>
+          
+          <ng-template #uploadedTemplate>
+            <p>Видео загружено ✅</p>
+          </ng-template>
+        </div>
+      </div>
+  
+      <button class="upload_btn" (click)="settings()" style="margin-top: 30px;">
+        Продолжить
+      </button>
+    </div>
+    
+    <div *ngIf="showSettings" style="width: 75%; margin:0 auto;">
+        <div class="settings_text">Размер используемой модели</div>
+        <div style="display: flex; margin: 0 auto; justify-content: center; margin-top: 10px;">
+          <div (click)="showSizesEvent()" class="drop_menu">
+            {{modelSizesSelected}}
+          </div>
+        </div>
+      
+        <div style="height: 10px;"></div>
+      
+        <div *ngIf="showSizes"
+          style="width: 100%; display: flex; flex-direction: column; align-items: center; margin: 0 auto; z-index: 99; position: absolute; left: 50%; transform: translateX(-50%);">
+          <div *ngFor="let item of modelSizes" (click)="modelSizeSelected(item)" class="drop_menu_element">
+            {{item}}
+          </div>
+        </div>
+      
+        <!-- Описание тоглеров теперь выровнено по левому краю -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
+          <div class="settings_text" style="margin-right: 15px;">
+            Добавить субтитры
+          </div>
+          <div class="toggle-switch" [class.active]="video.subtitles" (click)="toggleSubtitles()"></div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
+            <div class="settings_text" style="margin-right: 15px;">
+              Определять юмористический контент
+            </div>
+            <div class="toggle-switch" [class.active]="video.humor" (click)="toggleHumor()"></div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
+            <div class="settings_text" style="margin-right: 15px;">
+              Определять кликбейтный контент
+            </div>
+            <div class="toggle-switch" [class.active]="video.clickbait" (click)="toggleClickbait()"></div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
+            <div class="settings_text" style="margin-right: 15px;">
+              Формат видео 9:16 с полями (видео помещается полностью)
+            </div>
+            <div class="toggle-switch" [class.active]="video.fields" (click)="togglerFields()"></div>
+        </div>
+      
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
+          <div class="settings_text" style="margin-right: 15px; width: 80%; text-align: left;">
+            Формат видео 9:16 без полей (видео обрезается под формат (досупен трэкинг лица))
+          </div>
+          <div class="toggle-switch" [class.active]="!video.fields" (click)="togglerFields()"></div>
+        </div>
+      
+        <div *ngIf="!video.fields" style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
+          <div class="settings_text" style="margin-right: 15px;">
+            Трэкинг лица (слежение камеры за лицом в кадре)
+          </div>
+          <div class="toggle-switch" [class.active]="video.face_tracking" (click)="toggleFace()"></div>
+        </div>
+
+
+        <div class="settings_text" style="margin-top: 20px; margin-bottom: -5px;">Порок уверенности модели</div>
+        <div style="margin-top: 10px; width: 100%; display: flex; align-items: center; justify-content: space-between;">
+            <input type="range" min="0" max="1" step="0.01" [(ngModel)]="video.threshold" style="width: 100%;" class="custom-slider">
+            <div style="margin-left: 10px;" class="settings_text">{{video.threshold | number:'1.2-2'}}</div>
+        </div>
+
+        <div style="display: flex; align-items: center; margin-top: 20px; width: 100%;">
+            <div class="settings_text" style="margin-right: 15px;">
+                Минимальная длина видео
+            </div>
+            <div style="margin-left: auto; display: flex; align-items: center; justify-content: right;">
+                <input type="number" [(ngModel)]="video.min_length" min="0" class="number_input">
+                <div class="settings_text" style="margin-left: 5px;">сек.</div>
+            </div>
+        </div>
+
+        <div style="display: flex; align-items: center; margin-top: 20px; width: 100%;">
+            <div class="settings_text" style="margin-right: 15px;">
+                Максимальная длина видео
+            </div>
+            <div style="margin-left: auto; display: flex; align-items: center; justify-content: right;">
+                <input type="number" [(ngModel)]="video.max_length" min="0" class="number_input">
+                <div class="settings_text" style="margin-left: 5px;">сек.</div>
+            </div>
+        </div>
+      
+        <div style="margin-top: 50px;">
+          <button class="upload_btn" (click)="upload()">
+            Начать генерацию
+          </button>
+        </div>
+      
+        <div>
+          <button style="margin-top: 10px;" class="inverse_btn" (click)="again()">
+            Назад
+          </button>
+        </div>
+    </div>
+    
+    <!-- <div *ngIf="showResult && !showSettings">
+  
+      <div>
+        <div style="display: flex; margin: 0 auto; justify-content: center;">
+          <div class="loader"></div> 
+        </div>
+        <div style="height: 10px;"></div>
+        <div class="settings_text">
+          Собираем результат для вас...
+        </div>
+        <div class="settings_text">
+          Это может занять до 99 лет
+        </div>
+    
+        <div class="description">
+          Вот что у нас получилось:
+        </div>
+      </div>
+  
+      <div>
+        <div style="margin-top: 10px; text-align: center;">
+          <button class="upload_btn">
+            Скачать архив
+          </button>
+        </div>
+      
+        <div style="margin-top: 10px; text-align: center;">
+          <button class="inverse_btn" (click)="again()">
+            Загрузить еще видео
+          </button>
+        </div>
+      </div>
+    </div> -->
+    
+  </div>

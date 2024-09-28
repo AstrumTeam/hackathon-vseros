@@ -1,0 +1,111 @@
+<div style="display: flex; margin: 0 auto; justify-content: center;">
+    <div class="astrum">
+      astrum
+    </div>
+    <div class="point"></div>
+    <div class="studio">Studio</div>
+</div>
+  
+  <div class="description">
+    Генерация виральных клипов
+  </div>
+  
+  <div style="height: 50px;"></div>
+
+<div>
+  
+    <div *ngIf="loading" style="margin-top: 200px;">
+      <div style="display: flex; margin: 0 auto; justify-content: center;">
+        <div class="loader"></div> 
+      </div>
+      <div style="height: 10px;"></div>
+      <div class="settings_text">
+        Собираем результат для вас...
+      </div>
+      <div class="settings_text">
+        Это может занять до 99 лет
+      </div>
+    </div>
+
+    <div *ngIf="!loading">
+        <div class="description">
+            Вот что у нас получилось:
+        </div>
+    
+        <div style="height: 30px;"></div>
+    
+        <div style="display: flex; justify-content: center; width: 70%; margin: 0 auto; gap: 30px; flex-wrap: wrap;">
+            <div style="position: relative; width: 180px; height: 320px;">
+                <span class="label">ААА</span>
+                <video width="180" height="320" controls class="player">
+                    <source src="https://19e7-83-220-236-131.ngrok-free.app/api/get/file/id/2f2c9726-2182-4cda-92e8-23104dcda222" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div style="position: relative; width: 180px; height: 320px;">
+                <span class="label">Юмор</span>
+                <video width="180" height="320" controls class="player">
+                    <source src="assets/final_output_video_2.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            
+            <div style="position: relative; width: 180px; height: 320px;">
+                <span class="label">Юмор</span>
+                <video width="180" height="320" controls class="player">
+                    <source src="assets/processed_video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            
+            <div style="position: relative; width: 180px; height: 320px;">
+                <span class="label">Юмор</span>
+                <video width="180" height="320" controls class="player">
+                    <source src="assets/processed_video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            
+            <div style="position: relative; width: 180px; height: 320px;">
+                <span class="label">Юмор</span>
+                <video width="180" height="320" controls class="player">
+                    <source src="assets/processed_video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            
+            <div style="position: relative; width: 180px; height: 320px;">
+                <span class="label">Юмор</span>
+                <video width="180" height="320" controls class="player">
+                    <source src="assets/processed_video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            
+            <div style="position: relative; width: 180px; height: 320px;">
+                <span class="label">Юмор</span>
+                <video width="180" height="320" controls class="player">
+                    <source src="assets/processed_video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    
+        <div>
+            <div style="margin-top: 10px; text-align: center;">
+                <button class="upload_btn">
+                    Скачать архив
+                </button>
+            </div>
+    
+            <div style="margin-top: 10px; text-align: center;">
+                <button class="inverse_btn" (click)="again()">
+                    Загрузить еще видео
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="height: 50px;"></div>
