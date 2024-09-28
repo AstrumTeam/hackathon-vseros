@@ -37,13 +37,16 @@ class Backend:
 
         print('processing_transcribe')
         tags = self.__processing_transcribe(f'{self.__model_whisper_out_name}.tsv')
+        print(len(tags))
 
         print('split_tags_by_sentences')
         sentences_tags = self.__split_tags_by_sentences(tags)
+        print(len(sentences_tags))
 
         print('get_interest_clip_tags')
         interest_clip_tags = self.__get_interest_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
-        
+        print(len(interest_clip_tags))
+
         # if humor:
         #     pass
 
@@ -54,7 +57,6 @@ class Backend:
         video = VideoFileClip("videos/" + upload_filename)
         print('create_tags')
         for i in range(len(interest_clip_tags)):
-            print(interest_clip_tags[i])
             clip = video.subclip(interest_clip_tags[i]['start'], interest_clip_tags[i]['end'])
 
 
@@ -86,7 +88,7 @@ class Backend:
 
         clip_tags = []
         current_index = 0
-        while current_index <= len(interest_tags)-2:
+        while current_index < len(interest_tags)-2:
             if interest_tags[current_index] == 1:
                 start_index = current_index
                 end_index = current_index+1
