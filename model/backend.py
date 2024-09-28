@@ -271,7 +271,7 @@ class Backend:
             print(1)
             current_index = 0
             while current_index < len(tags)-3:
-                print(current_index + ' 2')
+                print(str(current_index) + ' 2')
                 start, end = current_index, current_index+1
 
                 clip_text = tags[start]['text']
@@ -279,18 +279,18 @@ class Backend:
 
                 stop_flag = False
                 while stop_flag == False:
-                    print(current_index + ' 3')
+                    print(str(current_index) + ' 3')
                     new_clip_text = ' '.join([x['text'] for x in tags[start:end+1]])
                     new_count_sentences = len(self.__processing.split_by_sentences(new_clip_text))
 
                     if new_count_sentences != count_sentences:
-                        print(current_index + ' 4')
+                        print(str(current_index) + ' 4')
                         current_index = end
                         sentence_tag = {'start': tags[start]['start'], 'end': tags[end-1]['end'], 'text': clip_text}
                         sentences_tags.append(sentence_tag)
                         stop_flag = True
                     else:
-                        print(current_index + ' 5')
+                        print(str(current_index) + ' 5')
                         clip_text = new_clip_text
                         end += 1
         return sentences_tags
