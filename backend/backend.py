@@ -57,6 +57,7 @@ class Backend:
         #Определяем интересные клипы
         interest_clip_tags = self.__get_interest_clip_tags(sentences_tags=tags, threshold=threshold, min_length=min_length, max_length=max_length)
         print(len(interest_clip_tags))
+        print(interest_clip_tags)
 
         interest_clip_names= []
         print('interest_clips')
@@ -319,8 +320,7 @@ class Backend:
     
     #Сглаживаем результат работы модели
     def __normalize(self, pred, threshold=0.5):
-        pred_soft = []
-        pred_soft = pred_soft + pred[:4]
+        pred_soft = pred[:4]
         #Усредняем близкие текста
         for i in range(4, len(pred)-4):
             new_i = (pred[i-4] + pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3] + pred[i+4])/9
