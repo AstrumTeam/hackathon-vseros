@@ -20,8 +20,7 @@ class Encoder:
 #Классификация по интересу
 class InterestClassificationModel:
     def __init__(self):
-        print("Cuda is:" + str(torch.cuda.is_available()))
-        print(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+        print("Cuda is: " + str(torch.cuda.is_available()))
         self.__device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.__model = torch.nn.Sequential(
@@ -50,8 +49,7 @@ class InterestClassificationModel:
 #Классификация по юмору
 class HumorClassificationModel:
     def __init__(self):
-        print("Cuda is:" + str(torch.cuda.is_available()))
-        print(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+        print("Cuda is: " + str(torch.cuda.is_available()))
         self.__device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.__model = torch.nn.Sequential(
@@ -80,8 +78,7 @@ class HumorClassificationModel:
 #Классификация по кликбейту
 class ClickbaitClassificationModel:
     def __init__(self):
-        print("Cuda is:" + str(torch.cuda.is_available()))
-        print(torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+        print("Cuda is: " + str(torch.cuda.is_available()))
         self.__device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.__model = torch.nn.Sequential(

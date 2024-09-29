@@ -63,7 +63,7 @@ class Backend:
         interest_clip_names= []
         print('interest_clips')
         for i in range(len(interest_clip_tags)):
-            clip = video.subclip(interest_clip_tags[i]['start'], interest_clip_tags[i]['end'])
+            clip = video.subclip(interest_clip_tags[i]['start'], interest_clip_tags[i]['end']+0.5)
 
 
             if face_tracking == True:
@@ -97,7 +97,7 @@ class Backend:
             
             print('humor_clips')
             for i in range(len(humor_clip_tags)):
-                clip = video.subclip(humor_clip_tags[i]['start'], humor_clip_tags[i]['end'])
+                clip = video.subclip(humor_clip_tags[i]['start'], humor_clip_tags[i]['end']+0.5)
 
 
                 if face_tracking == True:
@@ -131,7 +131,7 @@ class Backend:
 
             print('clickbait_clips')
             for i in range(len(clickbait_clip_tags)):
-                clip = video.subclip(clickbait_clip_tags[i]['start'], clickbait_clip_tags[i]['end'])
+                clip = video.subclip(clickbait_clip_tags[i]['start'], clickbait_clip_tags[i]['end']+0.5)
 
 
                 if face_tracking == True:
