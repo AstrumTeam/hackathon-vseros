@@ -29,7 +29,7 @@ class Backend:
         self.__model_whisper_out_name = 'transcribe_audio'
 
     def work(self, upload_filename, 
-             threshold = 0.5, min_length = 10, max_length = 61800, 
+             threshold = 0.5, min_length = 10, max_length = 90, 
              subtitles = False, fields = True, face_tracking = False,
              humor = False, clickbait = False):
         
@@ -321,12 +321,12 @@ class Backend:
     
     #Сглаживаем результат работы модели
     def __normalize(self, pred, threshold=0.5):
-        pred_soft = pred[:4]
+        pred_soft = pred[:3]
         #Усредняем близкие текста
-        for i in range(4, len(pred)-4):
-            new_i = (pred[i-4] + pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3] + pred[i+4])/9
+        for i in range(3, len(pred)-3):
+            new_i = (pred[i-3] + pred[i-2] + pred[i-1] + pred[i] + pred[i+1] + pred[i+2] + pred[i+3])/7
             pred_soft.append(new_i)
-        pred_soft = pred_soft + pred[-4:]
+        pred_soft = pred_soft + pred[-3:]
 
         #Сглаживание по гауссу
         soft = gaussian_filter(pred_soft, sigma=.8)
