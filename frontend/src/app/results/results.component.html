@@ -35,23 +35,25 @@
         <div style="height: 30px;"></div>
     
         <div style="display: flex; justify-content: center; width: 70%; margin: 0 auto; gap: 30px; flex-wrap: wrap;">
-            <div style="position: relative; width: 180px; height: 320px;">
-                <span class="label">ААА</span>
-                <video width="180" height="320" controls class="player">
-                    <source src="https://19e7-83-220-236-131.ngrok-free.app/api/get/file/id/2f2c9726-2182-4cda-92e8-23104dcda222" type="video/mp4">
+            <div *ngFor="let item of clips" style="position: relative; width: 180px; height: 320px;">
+                <span *ngIf="item.tag === 'interest'" class="label">Интересно</span>
+                <span *ngIf="item.tag === 'humor'" class="label_humor">Юмор</span>
+                <span *ngIf="item.tag === 'clickbait'" class="label_clickbait">Кликбейт</span>
+                <video *ngIf="item.tag === 'interest'" width="180" height="320" controls class="player">
+                    <source src="http://astrum-team.ru:8080/api/get/file/id/{{item.id}}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
-            </div>
-
-            <div style="position: relative; width: 180px; height: 320px;">
-                <span class="label">Юмор</span>
-                <video width="180" height="320" controls class="player">
-                    <source src="assets/final_output_video_2.mp4" type="video/mp4">
+                <video *ngIf="item.tag === 'humor'" width="180" height="320" controls class="player_humor">
+                    <source src="http://astrum-team.ru:8080/api/get/file/id/{{item.id}}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <video *ngIf="item.tag === 'clickbait'" width="180" height="320" controls class="player_clickbait">
+                    <source src="http://astrum-team.ru:8080/api/get/file/id/{{item.id}}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>
             
-            <div style="position: relative; width: 180px; height: 320px;">
+            <!-- <div style="position: relative; width: 180px; height: 320px;">
                 <span class="label">Юмор</span>
                 <video width="180" height="320" controls class="player">
                     <source src="assets/processed_video.mp4" type="video/mp4">
@@ -73,23 +75,7 @@
                     <source src="assets/processed_video.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
-            </div>
-            
-            <div style="position: relative; width: 180px; height: 320px;">
-                <span class="label">Юмор</span>
-                <video width="180" height="320" controls class="player">
-                    <source src="assets/processed_video.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-            
-            <div style="position: relative; width: 180px; height: 320px;">
-                <span class="label">Юмор</span>
-                <video width="180" height="320" controls class="player">
-                    <source src="assets/processed_video.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
+            </div> -->
         </div>
     
         <div>

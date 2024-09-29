@@ -19,6 +19,9 @@
       <div class="instruction">
         Загрузите свое видео, а мы сделаем из него множество интересных клипов с нужными вам настройками.
       </div>
+      <div class="instruction" style="margin-top: 10px; font-weight: 600;">
+        Ваше видео должно быть длительностью от 1 минуты до 2-ух часов.
+      </div>
   
       <div style="text-align: center; margin: 0 auto; margin-top: 30px;">
         <div class="upload-container"
@@ -46,13 +49,13 @@
         </div>
       </div>
   
-      <button class="upload_btn" (click)="settings()" style="margin-top: 30px;">
+      <!-- <button class="upload_btn" (click)="settings()" style="margin-top: 30px;">
         Продолжить
-      </button>
+      </button> -->
     </div>
     
     <div *ngIf="showSettings && !loading" style="width: 75%; margin:0 auto;">
-        <div class="settings_text">Размер используемой модели</div>
+        <!-- <div class="settings_text">Размер используемой модели</div>
         <div style="display: flex; margin: 0 auto; justify-content: center; margin-top: 10px;">
           <div (click)="showSizesEvent()" class="drop_menu">
             {{modelSizesSelected}}
@@ -66,7 +69,7 @@
           <div *ngFor="let item of modelSizes" (click)="modelSizeSelected(item)" class="drop_menu_element">
             {{item}}
           </div>
-        </div>
+        </div> -->
       
         <!-- Описание тоглеров теперь выровнено по левому краю -->
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
@@ -78,14 +81,14 @@
 
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
             <div class="settings_text" style="margin-right: 15px;">
-              Определять юмористический контент
+              Определять юмористический контент <span style="color: grey;">(увеличивает время ожидания)</span>
             </div>
             <div class="toggle-switch" [class.active]="video.humor" (click)="toggleHumor()"></div>
         </div>
 
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
             <div class="settings_text" style="margin-right: 15px;">
-              Определять кликбейтный контент
+              Определять кликбейтный контент <span style="color: grey;">(увеличивает время ожидания)</span>
             </div>
             <div class="toggle-switch" [class.active]="video.clickbait" (click)="toggleClickbait()"></div>
         </div>
@@ -99,14 +102,14 @@
       
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
           <div class="settings_text" style="margin-right: 15px; width: 80%; text-align: left;">
-            Формат видео 9:16 без полей (видео обрезается под формат (досупен трэкинг лица))
+            Формат видео 9:16 без полей (видео обрезается под формат, досупен трэкинг лица)
           </div>
           <div class="toggle-switch" [class.active]="!video.fields" (click)="togglerFields()"></div>
         </div>
       
         <div *ngIf="!video.fields" style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px; width: 100%;">
           <div class="settings_text" style="margin-right: 15px;">
-            Трэкинг лица (слежение камеры за лицом в кадре)
+            Трэкинг лица <span style="color: red;">(сильно увеличивает время ожидания)</span>
           </div>
           <div class="toggle-switch" [class.active]="video.face_tracking" (click)="toggleFace()"></div>
         </div>
@@ -114,7 +117,7 @@
 
         <div class="settings_text" style="margin-top: 20px; margin-bottom: -5px;">Порок уверенности модели</div>
         <div style="margin-top: 10px; width: 100%; display: flex; align-items: center; justify-content: space-between;">
-            <input type="range" min="0" max="1" step="0.01" [(ngModel)]="video.threshold" style="width: 100%;" class="custom-slider">
+            <input type="range" min="0.2" max="1" step="0.01" [(ngModel)]="video.threshold" style="width: 100%;" class="custom-slider">
             <div style="margin-left: 10px;" class="settings_text">{{video.threshold | number:'1.2-2'}}</div>
         </div>
 
@@ -156,10 +159,10 @@
           <div class="loader"></div> 
         </div>
         <div style="height: 10px;"></div>
-        <div class="settings_text">
+        <div class="loading_text">
           Собираем результат для вас...
         </div>
-        <div class="settings_text">
+        <div class="loading_text">
           Это может занять до 99 лет
         </div>
     </div>

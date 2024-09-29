@@ -178,6 +178,14 @@
 }
 
 .settings_text{
+    text-align: left;
+    font-size: 20px;
+    font-weight: 500;
+    color: rgb(31,38,46);
+    font-family: 'Open Sans';
+}
+
+.loading_text{
     text-align: center;
     font-size: 20px;
     font-weight: 500;

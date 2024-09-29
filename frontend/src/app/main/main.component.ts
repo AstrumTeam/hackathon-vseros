@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MainService, Video } from '../services/main-service.service';
+import { Clip, MainService, ServerResponse, Video } from '../services/main-service.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class MainComponent {
   threshold: number = 0.50;
 
-  clips: string[] = [];
+  clips: Clip[] = [];
 
   loading: boolean = false;
 
@@ -41,10 +41,6 @@ export class MainComponent {
     private router: Router,
   ){}
 
-  startGeneration(){
-    this.service.generate(this.video);
-  }
-
   isVideoUploaded: boolean = false;
 
   isDragOver: boolean = false;
@@ -52,9 +48,29 @@ export class MainComponent {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      const file = input.files[0];
+        const file = input.files[0];
 
-      this.uploadVideo(file);
+        // Создаем URL объекта для видеофайла
+        const videoURL = URL.createObjectURL(file);
+        const video = document.createElement('video');
+
+        // Загружаем метаданные видео
+        video.preload = 'metadata';
+        video.onloadedmetadata = () => {
+            const duration = video.duration; // Длительность в секундах
+
+            // Проверяем условия длительности
+            if (duration < 60 || duration > 7200) { // 60 секунд = 1 минута, 7200 секунд = 2 часа
+                alert('Длительность видео должна быть от 1 минуты до 2 часов.');
+                return;
+            }
+
+            // Если длительность подходит, продолжаем загрузку
+            this.uploadVideo(file);
+        };
+
+        // Начинаем загрузку метаданных
+        video.src = videoURL;
     }
   }
 
@@ -83,6 +99,10 @@ export class MainComponent {
     this.video.video = file;
     console.log('Загруженное видео:', this.video.video);
     this.isVideoUploaded = true;
+
+    setTimeout(() => {
+      this.settings();
+    }, 1000)
   }
 
   modelSizeSelected(size: string){
@@ -114,18 +134,37 @@ export class MainComponent {
     this.video.face_tracking = !this.video.face_tracking;
   }
 
+  getTest() {
+    this.service.getTest().subscribe((data: ServerResponse) => {
+      // Преобразуем массив массивов в массив объектов Clip
+      const clipsArray: Clip[] = data.clips.map(clip => ({
+        id: clip[0],
+        tag: clip[1],
+        rate: clip[2]
+      }));
+  
+      this.clips = clipsArray;
+  
+      // Теперь `this.clips` содержит массив объектов с типом `Clip`
+      console.log(this.clips[0]);  // вывод первого элемента в консоль
+    });
+  }
+
   upload(){
     this.showSettings = !this.showSettings;
     this.loading = true;
-    this.service.addVideo(this.video).subscribe((data: any) => {
-      console.log('ОТВЕТ СЕРВЕРА',data)
-      this.clips = data;
-      this.loading = false;
-      this.service.clips = data;
+    this.service.addVideo(this.video).subscribe((data: ServerResponse) => {
+      // Преобразуем массив массивов в массив объектов Clip
+      const clipsArray: Clip[] = data.clips.map(clip => ({
+        id: clip[0],
+        tag: clip[1],
+        rate: clip[2]
+      }));
+  
+      this.clips = clipsArray;
+      this.service.clips = clipsArray;
       this.router.navigate([`/results`]);
     });
-
-    this.startGeneration();
   }
 
   settings(){

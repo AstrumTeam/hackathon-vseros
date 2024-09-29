@@ -23,13 +23,7 @@ import { CustomCorsInterceptor } from './custom-cors-interceptor.interceptor';
     FormsModule,
     HttpClientModule,
   ],
-  providers: [
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: CustomCorsInterceptor,
-    //   multi: true
-    // }
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

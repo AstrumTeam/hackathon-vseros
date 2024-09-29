@@ -2,10 +2,12 @@ from moviepy.editor import VideoFileClip, ColorClip, CompositeVideoClip
 import io
 import os
 import tempfile
+from moviepy.video.VideoClip import VideoClip
 
-def crop_video_to_9_16(video_clip):
+def crop_video_to_9_16_test(video_clip):
     """
     Обрезает видео до соотношения сторон 9:16, центрируя его.
+    Если разрешение меньше 1620x1080, изменяет размер до 576x1024.
     
     :param video_clip: Входной видеоклип (объект MoviePy VideoFileClip).
     :return: Обрезанный видеоклип (объект MoviePy VideoFileClip).
@@ -13,10 +15,48 @@ def crop_video_to_9_16(video_clip):
     # Получаем ширину и высоту оригинального видео
     width, height = video_clip.size
 
-    # Рассчитываем новую ширину для формата 9:16
+    # Проверяем, если разрешение меньше 1620x1080
+    if width < 1620 or height < 1080:
+        # Изменяем размер до 576x1024
+        resized_video = video_clip.resize(newsize=(576, 1024))
+        return resized_video.set_audio(video_clip.audio)
+
+    # Иначе, обрезаем до соотношения 9:16
     new_height = height
     new_width = int(new_height * 9 / 16)
 
+    # Обрезаем видео по центру
+    cropped_video = video_clip.crop(x_center=width / 2, y_center=height / 2, width=new_width, height=new_height)
+
+    # Возвращаем обрезанный видеоклип
+    return cropped_video.set_audio(video_clip.audio)
+
+def crop_video_to_9_16(video_clip):
+    """
+    Обрезает видео до соотношения сторон 9:16, центрируя его, с учётом исходного соотношения пикселей.
+    
+    :param video_clip: Входной видеоклип (объект MoviePy VideoFileClip).
+    :return: Обрезанный видеоклип (объект MoviePy VideoFileClip).
+    """
+    # Получаем ширину и высоту оригинального видео
+    width, height = video_clip.size
+
+    # Рассчитываем фактическое соотношение сторон
+    aspect_ratio = width / height
+
+    print(aspect_ratio)
+
+    # Рассчитываем желаемую высоту и ширину для 9:16
+    new_height = height
+    new_width = int(new_height * 9 / 16)
+
+    # Проверка, если рассчитанная ширина превышает оригинальную ширину
+    if new_width > width:
+        # Если да, то пересчитываем высоту
+        new_width = width
+        new_height = int(new_width * 16 / 9)
+
+    # Теперь мы знаем, что new_width и new_height соответствуют соотношению 9:16
     # Обрезаем видео по центру
     cropped_video = video_clip.crop(x_center=width / 2, y_center=height / 2, width=new_width, height=new_height)
 

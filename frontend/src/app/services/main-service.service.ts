@@ -14,8 +14,14 @@ export interface Video{
   video: File | null
 }
 
-export interface ServerResponse{
-  clips: string[];
+export interface ServerResponse {
+  clips: [string, string, number][];
+}
+
+export interface Clip{
+  id: string,
+  tag: string,
+  rate: number
 }
 
 @Injectable({
@@ -24,13 +30,13 @@ export interface ServerResponse{
 export class MainService {
   videos: Blob[] = [];
 
-  clips: string[] = [];
+  clips: Clip[] = [];
 
   constructor(
     private httpClient: HttpClient,
   ) { }
 
-  private baseUrl = 'https://8d0c-83-220-236-222.ngrok-free.app';
+  private baseUrl = 'http://77.105.174.197:8080';
 
   addVideo(videoData: Video): Observable<ServerResponse> {
     const formData = new FormData();
@@ -55,11 +61,7 @@ export class MainService {
     return this.httpClient.post<ServerResponse>(this.baseUrl + "/api/create/clips", formData);
   }
 
-  downloadVideos(): Observable<Blob> {
-    return this.httpClient.get(`${this.baseUrl}/download_videos`, { responseType: 'blob' });
-  }
-
-  generate(data: Video){
-
+  getTest(): Observable<ServerResponse>{
+    return this.httpClient.get<ServerResponse>(this.baseUrl + "/api/test")
   }
 }
